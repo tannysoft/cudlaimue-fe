@@ -1,0 +1,66 @@
+name = "cudlaimue-fe"
+main = ".open-next/worker.js"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+# ----------------------------------------------------------------------------
+# By default this deploys to  cudlaimue-fe.<account>.workers.dev  (preview).
+# When ready to cutover to the real domain, uncomment the `routes` block.
+# ----------------------------------------------------------------------------
+workers_dev = true
+# routes = [
+#   { pattern = "cudlaimue.com/*", zone_name = "cudlaimue.com" },
+#   { pattern = "www.cudlaimue.com/*", zone_name = "cudlaimue.com" },
+# ]
+
+# ---------- Bindings (same for dev/preview/prod) ----------
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cudlaimue-db"
+database_id = "e802cab5-0a16-49b7-82bb-4e867739219a"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "cudlaimue-assets"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "481d8620e30a43f28e88b17b913ea445"
+
+[[kv_namespaces]]
+binding = "NEXT_INC_CACHE_KV"
+id = "d13ee83de7244fdda1788388e4b4928d"
+
+[browser]
+binding = "BROWSER"
+
+# Image Transformations — on-the-fly resize/format-convert for <Image> tags.
+# Docs: https://developers.cloudflare.com/images/transform-images/bindings/
+[images]
+binding = "IMAGES"
+
+# ---------- Public vars (NOT secrets) ----------
+# These are visible to anyone who inspects the Worker bundle. Only put
+# non-sensitive, same-everywhere values here. Host-dependent things (APP_URL)
+# are computed from the incoming request in code.
+
+[vars]
+WP_API_URL = "https://www.cudlaimue.com/wp-json/wp/v2"
+WC_API_URL = "https://www.cudlaimue.com/wp-json/wc/v3"
+LINE_LOGIN_CHANNEL_ID = "2009824355"
+LIFF_ID = "1657797454-Bb4wzbq8"
+BEAM_API_URL = "https://api.beamcheckout.com/api/v1"
+BEAM_MERCHANT_ID = "cudlaimue"
+
+# ---------- Secrets ----------
+# Set via `.dev.vars` (for local dev) and `wrangler secret put KEY` (for prod):
+#   SESSION_SECRET
+#   LINE_LOGIN_CHANNEL_SECRET
+#   BEAM_SECRET_KEY
+#   BEAM_WEBHOOK_SECRET
+# Browser Rendering uses the `[browser] BROWSER` binding above — no token
+# or account ID required.

@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "thongterm", "aktiv-grotesk-thai", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "aktiv-grotesk-thai", ui-sans-serif, system-ui, sans-serif;
+
+  /* Cudlaimue brand palette — derived from logo & cover */
+  --color-peach-50: #fdf5ec;
+  --color-peach-100: #fbe6cf;
+  --color-peach-200: #f7cfa5;
+  --color-peach-300: #f5b97e;
+  --color-peach-400: #ef9b5a;
+  --color-peach-500: #ee9050; /* primary orange from logo */
+  --color-peach-600: #d9763b;
+  --color-peach-700: #b15a2a;
+  --color-peach-800: #83421f;
+  --color-peach-900: #552a13;
+
+  --color-teal-50: #eaf3f0;
+  --color-teal-100: #c9e0d9;
+  --color-teal-200: #96c1b4;
+  --color-teal-300: #63a28f;
+  --color-teal-400: #418876;
+  --color-teal-500: #2e7163; /* brand teal from cover */
+  --color-teal-600: #255b50;
+  --color-teal-700: #1c453c;
+  --color-teal-800: #132f29;
+  --color-teal-900: #0a1a16;
+
+  --color-cream: #faf4ec;
+  --color-ink: #1f1a14;
+}
+
+:root {
+  color-scheme: light;
+  --background: #faf4ec;
+  --foreground: #1f1a14;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Every heading defaults to the display face (aktiv-grotesk-thai) — so callers
+   don't need to repeat the font-family class on each <h*>. Override per-site
+   with a different class when needed. */
+h1, h2, h3, h4, h5, h6,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+[role="button"],
+/* Anchor tags styled as buttons (detected by rounded + bg) */
+a[class*="rounded-full"],
+a[class*="rounded-xl"] {
+  font-family: var(--font-display);
+}
+
+/* Ebook viewer anti-copy hardening */
+.ebook-viewer {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.ebook-viewer img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Print disabled inside viewer — CSS layer */
+@media print {
+  .ebook-viewer {
+    display: none !important;
+  }
+}
+
+/* Scrollbar tweak for in-app */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--color-peach-200); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-peach-300); }
+
+/* Prose tweaks for articles */
+.prose-cudlaimue {
+  --tw-prose-headings: var(--color-teal-600);
+  --tw-prose-links: var(--color-peach-600);
+}
