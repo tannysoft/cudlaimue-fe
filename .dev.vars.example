@@ -1,0 +1,26 @@
+# ===============================================
+# Local dev secrets — copy to `.dev.vars` and fill
+# ===============================================
+# Wrangler auto-loads this file during `pnpm dev` / `pnpm preview`.
+# Never commit `.dev.vars` (already in .gitignore).
+#
+# For production, set the same keys via:
+#   pnpm wrangler secret put <KEY>
+
+SESSION_SECRET=dev-change-me-to-a-random-64-char-hex
+LINE_LOGIN_CHANNEL_SECRET=
+# LINE Messaging API token (optional) — used to bulk-fetch user avatars
+# from profile.line-scdn.net after import. Requires a Messaging API channel
+# with users that added your OA as friend.
+# https://developers.line.biz/console/ → Messaging API → Channel access token
+LINE_MESSAGING_CHANNEL_ACCESS_TOKEN=
+BEAM_SECRET_KEY=
+BEAM_WEBHOOK_SECRET=
+
+# WooCommerce REST API (WP admin → WooCommerce → Settings → Advanced → REST API)
+WC_CONSUMER_KEY=
+WC_CONSUMER_SECRET=
+
+# Runtime Cloudflare token for Browser Rendering (scope: Browser Rendering:Edit).
+# CLOUDFLARE_ACCOUNT_ID lives in wrangler.toml [vars] — it's not a secret.
+CF_BROWSER_TOKEN=

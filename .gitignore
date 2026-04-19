@@ -1,0 +1,32 @@
+# deps
+node_modules
+.pnpm-store
+
+# next
+.next/
+out/
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# cloudflare
+.open-next/
+.wrangler/
+.dev.vars
+!.dev.vars.example
+
+# env
+.env
+.env.local
+.env.*.local
+.tmp-secrets.json
+
+# system
+.DS_Store
+*.log
+
+# ide
+.vscode/
+.idea/
+
+# drizzle
+drizzle/
