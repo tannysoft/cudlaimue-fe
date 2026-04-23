@@ -10,6 +10,8 @@ import {
   FileText,
   Image as ImageIcon,
   AlertCircle,
+  AlertTriangle,
+  Trash2,
   Type,
   BookOpen,
   LayoutTemplate,
@@ -78,6 +80,7 @@ export function ProductEditor({ product }: { product?: Product }) {
     product?.coverImageKey ? `/api/assets/${product.coverImageKey}` : null,
   );
   const [assetName, setAssetName] = useState<string | null>(product?.fileName ?? null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const initialTags = parseJsonArray(product?.tags);
   const initialCategories = parseJsonArray(product?.categories);
@@ -170,6 +173,30 @@ export function ProductEditor({ product }: { product?: Product }) {
         router.refresh();
       } catch (err) {
         setError(String(err));
+      }
+    });
+  }
+
+  function doDelete() {
+    if (!product) return;
+    setError(null);
+    start(async () => {
+      try {
+        const r = await fetch(`/api/admin/products/${product.id}`, {
+          method: "DELETE",
+        });
+        if (!r.ok) {
+          const d = (await r.json().catch(() => ({}))) as {
+            message?: string;
+            error?: string;
+          };
+          throw new Error(d.message ?? d.error ?? `HTTP ${r.status}`);
+        }
+        router.push("/admin/products");
+        router.refresh();
+      } catch (err) {
+        setConfirmDelete(false);
+        setError(String(err instanceof Error ? err.message : err));
       }
     });
   }
@@ -403,8 +430,72 @@ export function ProductEditor({ product }: { product?: Product }) {
               <p className="text-[11px] text-ink/50 mt-1">ค่าที่มากขึ้น = อยู่บนสุด</p>
             </Field>
           </Card>
+
+          {product && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                disabled={pending}
+                className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700 disabled:opacity-60"
+              >
+                <Trash2 className="w-4 h-4" /> ลบสินค้านี้
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {confirmDelete && product && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-ink/90">
+                  ลบสินค้า &ldquo;{product.name}&rdquo;?
+                </h3>
+                <p className="mt-1.5 text-sm text-ink/60">
+                  การลบนี้ย้อนกลับไม่ได้ จะลบรายการดังต่อไปนี้อย่างถาวร:
+                </p>
+                <ul className="mt-2 text-sm text-ink/70 list-disc pl-5 space-y-1">
+                  <li>รูปปกและรูปตัวอย่างทั้งหมด</li>
+                  <li>
+                    ไฟล์สินค้าที่อัปโหลดไว้
+                    {product.type === "ebook" ? " (รวมหน้า PDF ที่แปลงแล้ว)" : ""}
+                  </li>
+                  <li>สิทธิ์การเข้าถึง (entitlements) ของผู้ใช้ที่เคยรับของฟรี</li>
+                </ul>
+                <p className="mt-2 text-xs text-ink/50">
+                  * หากมีออเดอร์ที่เคยซื้อสินค้านี้ ระบบจะไม่ให้ลบ —
+                  ให้ปิดการเผยแพร่แทน
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                disabled={pending}
+                className="rounded-full px-4 py-2 text-sm text-ink/60 hover:text-ink disabled:opacity-60"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={doDelete}
+                disabled={pending}
+                className="inline-flex items-center gap-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white px-5 py-2 text-sm font-medium disabled:opacity-60"
+              >
+                <Trash2 className="w-4 h-4" />
+                {pending ? "กำลังลบ…" : "ยืนยันลบ"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sticky footer bar */}
       <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-20 bg-[#faf6ec] border-t border-peach-100 shadow-[0_-8px_24px_rgba(0,0,0,0.04)]">
