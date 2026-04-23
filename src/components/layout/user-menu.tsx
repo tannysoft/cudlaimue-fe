@@ -27,7 +27,7 @@ export function UserMenu({
 
   return (
     <Menu as="div" className="relative">
-      <MenuButton className="group inline-flex items-center justify-center sm:justify-start sm:gap-2 rounded-full w-10 sm:w-auto h-10 overflow-hidden sm:overflow-visible transition sm:bg-white sm:border sm:border-peach-200 sm:pl-1 sm:pr-3 sm:hover:border-peach-400 sm:hover:bg-peach-50/60">
+      <MenuButton className="group inline-flex items-center justify-center sm:justify-start sm:gap-2 rounded-full w-10 h-10 sm:w-auto shrink-0 overflow-hidden sm:overflow-visible transition sm:bg-white sm:border sm:border-peach-200 sm:pl-1 sm:pr-3 sm:hover:border-peach-400 sm:hover:bg-peach-50/60">
         <Avatar avatarUrl={user.avatarUrl} initial={initial} />
         <span className="hidden sm:inline text-sm text-ink/80 max-w-32 truncate">{name}</span>
         <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-ink/40 group-data-[open]:rotate-180 transition" />
@@ -118,7 +118,7 @@ function Avatar({
         alt=""
         width={40}
         height={40}
-        className={`rounded-full object-cover shrink-0 ${
+        className={`block rounded-full object-cover shrink-0 ${
           size === "sm" ? "w-10 h-10 sm:w-8 sm:h-8" : "w-10 h-10"
         }`}
         unoptimized
