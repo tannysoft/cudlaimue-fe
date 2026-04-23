@@ -55,6 +55,19 @@ export function stripWpThumbSize(url: string | null | undefined): string | null 
 }
 
 /**
+ * WordPress moved from www.cudlaimue.com → cms.cudlaimue.com. Old Nextend
+ * Social Login avatar URLs stored in meta still point at the www host and now
+ * 404. Rewrite any wp-content path on the www host to the cms host.
+ */
+export function rewriteWpAvatarDomain(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.replace(
+    /^https?:\/\/www\.cudlaimue\.com\/wp-content\//i,
+    "https://cms.cudlaimue.com/wp-content/",
+  );
+}
+
+/**
  * Safe single-character extractor for avatar initials — handles emoji and
  * other multi-byte unicode correctly (string[0] would return half a surrogate
  * pair, which renders differently between Node SSR and browser → hydration

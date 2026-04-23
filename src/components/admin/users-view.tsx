@@ -26,6 +26,7 @@ import {
   AlertTriangle,
   Image as ImageIcon,
   Eye,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
@@ -108,6 +109,24 @@ export function UsersView({
     });
   }
 
+  function migrateAvatarDomain() {
+    start(async () => {
+      setErr(null);
+      const r = await fetch("/api/admin/users/migrate-avatar-domain", { method: "POST" });
+      const d = (await r.json().catch(() => ({}))) as {
+        affected?: number;
+        message?: string;
+        error?: string;
+      };
+      if (!r.ok) {
+        setErr(d.message ?? d.error ?? "แก้โดเมน avatar ไม่สำเร็จ");
+        return;
+      }
+      router.refresh();
+      alert(`อัปเดต avatar ${d.affected ?? 0} คน (www.cudlaimue.com → cms.cudlaimue.com)`);
+    });
+  }
+
   function doToggleRole() {
     if (!confirmRole) return;
     const nextRole = confirmRole.role === "admin" ? "user" : "admin";
@@ -155,6 +174,14 @@ export function UsersView({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={migrateAvatarDomain}
+            disabled={pending}
+            title="เปลี่ยน URL avatar เก่าจาก www.cudlaimue.com → cms.cudlaimue.com (รันครั้งเดียวหลังย้าย WP)"
+            className="inline-flex items-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-full px-4 py-2.5 text-sm font-medium disabled:opacity-60"
+          >
+            <RefreshCw className="w-4 h-4" /> แก้โดเมน avatar
+          </button>
           <button
             onClick={fetchLineAvatars}
             disabled={pending}
