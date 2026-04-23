@@ -126,7 +126,7 @@ export interface ArticleMetaInput {
 
 export function articleMetadata(a: ArticleMetaInput): Metadata {
   const description = stripHtml(a.excerpt ?? a.title, 160);
-  const url = abs(`/articles/${a.slug}`);
+  const url = abs(`/${a.slug}`);
   const image = a.coverImageUrl ?? abs(DEFAULT_OG_IMAGE);
   return {
     title: stripHtml(a.title, 70),
@@ -154,7 +154,7 @@ export function articleMetadata(a: ArticleMetaInput): Metadata {
 }
 
 export function articleJsonLd(a: ArticleMetaInput): Record<string, unknown> {
-  const url = abs(`/articles/${a.slug}`);
+  const url = abs(`/${a.slug}`);
   const image = a.coverImageUrl ?? abs(DEFAULT_OG_IMAGE);
   return {
     "@context": "https://schema.org",

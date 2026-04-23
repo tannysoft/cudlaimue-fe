@@ -71,7 +71,7 @@ export default async function AdminArticlesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
-                      href={`/articles/${a.slug}`}
+                      href={`/${a.slug}`}
                       target="_blank"
                       className="inline-flex items-center gap-1 text-peach-600 hover:underline text-sm"
                     >

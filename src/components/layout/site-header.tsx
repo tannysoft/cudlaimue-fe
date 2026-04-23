@@ -20,11 +20,7 @@ const NAV_LINKS: { href: string; label: string; external?: boolean }[] = [
   { href: "/ebooks", label: "อีบุ๊ก" },
   { href: "/articles", label: "บทความ" },
   { href: "/category/howto-install-font", label: "วิธีติดตั้ง" },
-  {
-    href: "https://line.me/R/ti/p/@595tsawy",
-    label: "ติดต่อสอบถาม",
-    external: true,
-  },
+  { href: "/contact", label: "ติดต่อสอบถาม" },
 ];
 
 export function SiteHeader({

@@ -12,7 +12,7 @@ export function ArticleCard({ article }: { article: WPArticle }) {
   const primaryCat = categories[0];
   return (
     <Link
-      href={`/articles/${article.slug}`}
+      href={`/${article.slug}`}
       className="group rounded-2xl bg-white border border-peach-100 overflow-hidden hover:shadow-md transition block"
     >
       <div className="relative aspect-[16/10] bg-cream">
