@@ -140,7 +140,13 @@ export function ProductEditor({ product }: { product?: Product }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) {
+          const d = (await res.json().catch(() => ({}))) as {
+            message?: string;
+            error?: string;
+          };
+          throw new Error(d.message ?? d.error ?? `HTTP ${res.status}`);
+        }
         const saved = (await res.json()) as { id: string };
         const pid = saved.id;
 
@@ -172,7 +178,7 @@ export function ProductEditor({ product }: { product?: Product }) {
         router.push("/admin/products");
         router.refresh();
       } catch (err) {
-        setError(String(err));
+        setError(String(err instanceof Error ? err.message : err));
       }
     });
   }
