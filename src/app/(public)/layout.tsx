@@ -3,7 +3,9 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { CookieNotice } from "@/components/layout/cookie-notice";
 import { CartToast } from "@/components/shop/cart-toast";
+import { LiffExternalProvider } from "@/components/liff/liff-external-provider";
 import { getSessionUser } from "@/lib/auth/session";
+import { env } from "@/lib/cf";
 import { db } from "@/lib/db";
 import { entitlements } from "@/lib/db/schema";
 
@@ -24,12 +26,14 @@ export default async function PublicLayout({ children }: { children: React.React
     hasLibrary = rows.length > 0;
   }
   return (
-    <div className="flex flex-col min-h-screen">
-      <SiteHeader user={user} hasLibrary={hasLibrary} />
-      <main className="flex-1">{children}</main>
-      <SiteFooter />
-      <CartToast />
-      <CookieNotice />
-    </div>
+    <LiffExternalProvider liffId={env().LIFF_ID}>
+      <div className="flex flex-col min-h-screen">
+        <SiteHeader user={user} hasLibrary={hasLibrary} />
+        <main className="flex-1">{children}</main>
+        <SiteFooter />
+        <CartToast />
+        <CookieNotice />
+      </div>
+    </LiffExternalProvider>
   );
 }

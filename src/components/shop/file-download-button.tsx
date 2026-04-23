@@ -1,6 +1,7 @@
 "use client";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Download, ChevronDown } from "lucide-react";
+import { useLiffExternal } from "@/components/liff/liff-external-provider";
 
 type File = { key: string; name: string; size: number | null };
 
@@ -20,6 +21,13 @@ export function FileDownloadButton({
   label?: string;
   className?: string;
 }) {
+  const { isInClient, openExternal } = useLiffExternal();
+  const handleClick =
+    (url: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!isInClient) return;
+      e.preventDefault();
+      openExternal(url);
+    };
   if (files.length === 0) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-ink/10 text-ink/40 text-sm px-3 py-1.5">
@@ -28,9 +36,11 @@ export function FileDownloadButton({
     );
   }
   if (files.length === 1) {
+    const url = `${baseHref}?file=${encodeURIComponent(files[0].key)}`;
     return (
       <a
-        href={`${baseHref}?file=${encodeURIComponent(files[0].key)}`}
+        href={url}
+        onClick={handleClick(url)}
         className={
           className ??
           "inline-flex items-center gap-1 rounded-full bg-peach-500 text-white text-sm px-3 py-1.5 hover:bg-peach-600"
@@ -55,11 +65,14 @@ export function FileDownloadButton({
         anchor={{ to: "bottom end", gap: 6 }}
         className="w-64 rounded-xl bg-white border border-peach-100 shadow-xl p-1 z-50 focus:outline-none"
       >
-        {files.map((f) => (
+        {files.map((f) => {
+          const url = `${baseHref}?file=${encodeURIComponent(f.key)}`;
+          return (
           <MenuItem key={f.key}>
             {({ focus }) => (
               <a
-                href={`${baseHref}?file=${encodeURIComponent(f.key)}`}
+                href={url}
+                onClick={handleClick(url)}
                 className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
                   focus ? "bg-peach-50 text-peach-700" : "text-ink/80"
                 }`}
@@ -74,7 +87,8 @@ export function FileDownloadButton({
               </a>
             )}
           </MenuItem>
-        ))}
+          );
+        })}
       </MenuItems>
     </Menu>
   );
