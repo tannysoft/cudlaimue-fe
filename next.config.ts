@@ -76,6 +76,12 @@ const nextConfig: NextConfig = {
       { source: "/api/library/:path*", headers: privateHeaders },
     ];
   },
+  async redirects() {
+    return [
+      { source: "/buy", destination: "/fonts", permanent: true },
+      { source: "/my-account/downloads", destination: "/account/library", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
