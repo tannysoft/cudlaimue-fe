@@ -146,7 +146,7 @@ export default async function HomePage() {
           <OwnedProductsProvider productIds={featured.map((p) => p.id)}>
             <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {featured.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard key={p.id} product={p} aspect="square" />
               ))}
             </div>
           </OwnedProductsProvider>
