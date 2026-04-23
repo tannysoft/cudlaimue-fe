@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Check, QrCode, Clock, RefreshCcw, AlertTriangle } from "lucide-react";
+import { Check, QrCode, Clock, RefreshCcw, AlertTriangle, AlertCircle } from "lucide-react";
 import { formatTHB } from "@/lib/utils";
 
 /**
@@ -81,6 +81,7 @@ export function CheckoutReturnView({
   const remainingMs = paymentExpiresAt ? Math.max(0, paymentExpiresAt - now) : 0;
   const mm = String(Math.floor(remainingMs / 60_000)).padStart(2, "0");
   const ss = String(Math.floor((remainingMs % 60_000) / 1000)).padStart(2, "0");
+  const urgent = paymentExpiresAt != null && remainingMs > 0 && remainingMs < 60_000;
 
   if (paid) {
     return (
@@ -155,6 +156,42 @@ export function CheckoutReturnView({
         </div>
       ) : paymentQrUrl ? (
         <>
+          {/* Prominent warning — don't leave the page */}
+          <div className="mb-4 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3 flex items-start gap-2.5">
+            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="text-sm text-amber-900 leading-relaxed">
+              <strong>อย่าปิดหรือออกจากหน้านี้</strong>{" "}
+              จนกว่าจะชำระเงินสำเร็จ — ระบบจะอัปเดตสถานะอัตโนมัติหลังโอนเงิน
+            </div>
+          </div>
+
+          {/* Countdown banner — prominent, color changes when urgent */}
+          {paymentExpiresAt && (
+            <div
+              className={`mb-4 rounded-2xl border px-4 py-3 flex items-center justify-between transition-colors ${
+                urgent
+                  ? "bg-red-50 border-red-200"
+                  : "bg-white border-peach-200"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Clock
+                  className={`w-5 h-5 ${
+                    urgent ? "text-red-600 animate-pulse" : "text-peach-600"
+                  }`}
+                />
+                <span className="text-sm text-ink/70">QR หมดอายุใน</span>
+              </div>
+              <span
+                className={`font-[family-name:var(--font-display)] text-3xl font-bold tabular-nums leading-none ${
+                  urgent ? "text-red-600" : "text-peach-700"
+                }`}
+              >
+                {mm}:{ss}
+              </span>
+            </div>
+          )}
+
           {/* Receipt-like QR card with PromptPay branding on top */}
           <div className="relative rounded-3xl bg-white shadow-lg shadow-peach-100/50 overflow-hidden">
             {/* PromptPay blue header */}
@@ -180,8 +217,8 @@ export function CheckoutReturnView({
             </div>
 
             {/* QR with corner markers */}
-            <div className="relative px-6 py-6 bg-gradient-to-b from-white to-cream/40">
-              <div className="relative mx-auto w-[260px] h-[260px]">
+            <div className="relative px-6 py-5 bg-gradient-to-b from-white to-cream/40">
+              <div className="relative mx-auto w-[220px] h-[220px]">
                 {/* Corner frame markers */}
                 <span className="absolute -top-1 -left-1 w-5 h-5 border-t-2 border-l-2 border-peach-400 rounded-tl-lg" />
                 <span className="absolute -top-1 -right-1 w-5 h-5 border-t-2 border-r-2 border-peach-400 rounded-tr-lg" />
@@ -198,26 +235,13 @@ export function CheckoutReturnView({
                     src={paymentQrUrl}
                     alt="QR PromptPay"
                     fill
-                    sizes="260px"
+                    sizes="220px"
                     className="object-contain scale-[1.12]"
                     unoptimized
                   />
                 </div>
               </div>
             </div>
-
-            {/* Expiry + status band */}
-            {paymentExpiresAt && (
-              <div className="px-6 py-3 border-t border-dashed border-peach-200 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 text-ink/60">
-                  <Clock className="w-3.5 h-3.5" />
-                  หมดอายุใน
-                </div>
-                <span className="font-mono font-bold text-peach-700 text-sm tabular-nums">
-                  {mm}:{ss}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Live status + manual refresh */}

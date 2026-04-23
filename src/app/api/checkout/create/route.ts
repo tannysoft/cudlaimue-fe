@@ -73,6 +73,7 @@ async function handle(req: NextRequest) {
         priceSatang: v.product.priceSatang,
         qty: v.qty,
       })),
+      user.id,
     );
     if (r.valid) {
       appliedCouponCode = r.coupon.code;

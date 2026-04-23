@@ -91,7 +91,8 @@ export default async function AdminProductsPage({
             )}
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[760px]">
             <thead>
               <tr className="text-xs uppercase tracking-wider text-ink/50 border-b border-peach-100 bg-[#fcf8f1]">
                 <th className="text-left px-5 py-3 font-medium">สินค้า</th>
@@ -174,6 +175,7 @@ export default async function AdminProductsPage({
               ))}
             </tbody>
           </table>
+          </div>
         )}
         <Pager
           page={page}

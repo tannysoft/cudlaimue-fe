@@ -27,10 +27,10 @@ export function UserMenu({
 
   return (
     <Menu as="div" className="relative">
-      <MenuButton className="group inline-flex items-center gap-2 rounded-full bg-white border border-peach-200 pl-1 pr-3 h-10 hover:border-peach-400 hover:bg-peach-50/60 transition">
+      <MenuButton className="group inline-flex items-center justify-center sm:justify-start sm:gap-2 rounded-full w-10 sm:w-auto h-10 overflow-hidden sm:overflow-visible transition sm:bg-white sm:border sm:border-peach-200 sm:pl-1 sm:pr-3 sm:hover:border-peach-400 sm:hover:bg-peach-50/60">
         <Avatar avatarUrl={user.avatarUrl} initial={initial} />
         <span className="hidden sm:inline text-sm text-ink/80 max-w-32 truncate">{name}</span>
-        <ChevronDown className="w-3.5 h-3.5 text-ink/40 group-data-[open]:rotate-180 transition" />
+        <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-ink/40 group-data-[open]:rotate-180 transition" />
       </MenuButton>
 
       <Transition
@@ -108,22 +108,26 @@ function Avatar({
   size?: "sm" | "lg";
 }) {
   const cls =
-    size === "sm" ? "w-8 h-8 text-xs" : "w-10 h-10 text-sm";
+    size === "sm"
+      ? "w-10 h-10 sm:w-8 sm:h-8 text-sm sm:text-xs"
+      : "w-10 h-10 text-sm";
   if (avatarUrl) {
     return (
       <Image
         src={avatarUrl}
         alt=""
-        width={size === "sm" ? 32 : 40}
-        height={size === "sm" ? 32 : 40}
-        className={`rounded-full ${size === "sm" ? "w-8 h-8" : "w-10 h-10"}`}
+        width={40}
+        height={40}
+        className={`rounded-full object-cover shrink-0 ${
+          size === "sm" ? "w-10 h-10 sm:w-8 sm:h-8" : "w-10 h-10"
+        }`}
         unoptimized
       />
     );
   }
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full bg-gradient-to-br from-peach-400 to-peach-600 text-white font-semibold ${cls}`}
+      className={`inline-flex items-center justify-center rounded-full bg-gradient-to-br from-peach-400 to-peach-600 text-white font-semibold leading-none ${cls}`}
     >
       {initial}
     </span>

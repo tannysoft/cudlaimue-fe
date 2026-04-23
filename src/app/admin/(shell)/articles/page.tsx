@@ -45,7 +45,8 @@ export default async function AdminArticlesPage() {
             <div className="mt-4 font-medium text-ink/70">ยังไม่มีบทความ</div>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="text-xs uppercase tracking-wider text-ink/50 border-b border-peach-100 bg-[#fcf8f1]">
                 <th className="text-left px-5 py-3 font-medium">ชื่อเรื่อง</th>
@@ -81,6 +82,7 @@ export default async function AdminArticlesPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

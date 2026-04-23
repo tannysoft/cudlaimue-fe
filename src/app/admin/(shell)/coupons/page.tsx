@@ -46,7 +46,8 @@ export default async function AdminCouponsPage() {
             </Link>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[820px]">
             <thead>
               <tr className="text-xs uppercase tracking-wider text-ink/50 border-b border-peach-100 bg-[#fcf8f1]">
                 <th className="text-left px-5 py-3 font-medium">โค้ด</th>
@@ -64,8 +65,13 @@ export default async function AdminCouponsPage() {
                   key={c.id}
                   className="border-b border-peach-100 last:border-0 hover:bg-peach-50/60 transition"
                 >
-                  <td className="px-5 py-3 font-mono font-semibold text-teal-800">
-                    {c.code}
+                  <td className="px-5 py-3 font-mono font-semibold">
+                    <Link
+                      href={`/admin/coupons/${c.id}`}
+                      className="text-teal-800 hover:text-peach-600"
+                    >
+                      {c.code}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 font-medium text-peach-700">
                     {c.type === "percent" ? `${c.value}%` : formatTHB(c.value)}
@@ -109,6 +115,7 @@ export default async function AdminCouponsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

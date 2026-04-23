@@ -12,9 +12,11 @@ const CreateSchema = z.object({
   value: z.number().int().positive(),
   minSubtotalSatang: z.number().int().nonnegative().nullable().optional(),
   maxUses: z.number().int().positive().nullable().optional(),
+  maxUsesPerUser: z.number().int().positive().nullable().optional(),
   expiresAt: z.number().int().positive().nullable().optional(),
   isActive: z.boolean().optional(),
   productIds: z.array(z.string()).nullable().optional(),
+  notes: z.string().max(1000).nullable().optional(),
 });
 
 export async function GET() {
@@ -63,9 +65,11 @@ export async function POST(req: NextRequest) {
     value: body.value,
     minSubtotalSatang: body.minSubtotalSatang ?? null,
     maxUses: body.maxUses ?? null,
+    maxUsesPerUser: body.maxUsesPerUser ?? null,
     expiresAt: body.expiresAt ?? null,
     isActive: body.isActive ?? true,
     productIds,
+    notes: body.notes?.trim() ? body.notes.trim() : null,
     usedCount: 0,
     createdAt: ts,
     updatedAt: ts,

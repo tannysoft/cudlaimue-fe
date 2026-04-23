@@ -407,35 +407,35 @@ export function ProductEditor({ product }: { product?: Product }) {
       </div>
 
       {/* Sticky footer bar */}
-      <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-20 bg-white/95 backdrop-blur border-t border-peach-100">
-        <div className="max-w-[1400px] px-6 md:px-10 py-3 flex items-center gap-3">
-          {error && (
-            <div className="flex-1 flex items-center gap-2 text-sm text-red-600">
-              <AlertCircle className="w-4 h-4" />
-              {error}
+      <div className="fixed bottom-0 left-0 lg:left-64 right-0 z-20 bg-[#faf6ec] border-t border-peach-100 shadow-[0_-8px_24px_rgba(0,0,0,0.04)]">
+        <div className="max-w-[1400px] px-4 md:px-10 py-3 flex items-center gap-3">
+            {error && (
+              <div className="flex-1 flex items-center gap-2 text-sm text-red-600">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </div>
+            )}
+            <div className="ml-auto flex items-center gap-3">
+              <Link
+                href="/admin/products"
+                className="text-sm text-ink/60 hover:text-ink px-4 py-2.5"
+              >
+                ยกเลิก
+              </Link>
+              <button
+                disabled={pending}
+                className="inline-flex items-center gap-2 rounded-full bg-peach-500 hover:bg-peach-600 text-white px-6 py-2.5 text-sm font-medium shadow-sm disabled:opacity-60"
+              >
+                {pending ? (
+                  <>กำลังบันทึก…</>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" /> บันทึก
+                  </>
+                )}
+              </button>
             </div>
-          )}
-          <div className="ml-auto flex items-center gap-3">
-            <Link
-              href="/admin/products"
-              className="text-sm text-ink/60 hover:text-ink px-4 py-2.5"
-            >
-              ยกเลิก
-            </Link>
-            <button
-              disabled={pending}
-              className="inline-flex items-center gap-2 rounded-full bg-peach-500 hover:bg-peach-600 text-white px-6 py-2.5 text-sm font-medium shadow-sm disabled:opacity-60"
-            >
-              {pending ? (
-                <>กำลังบันทึก…</>
-              ) : (
-                <>
-                  <Check className="w-4 h-4" /> บันทึก
-                </>
-              )}
-            </button>
           </div>
-        </div>
       </div>
 
       <style>{`

@@ -11,10 +11,20 @@ export function ProductTaxonomy({
   return (
     <div className="mt-5 space-y-3">
       {categories.length > 0 && (
-        <TaxonomyRow label="หมวดหมู่" items={categories} paramName="category" variant="teal" />
+        <TaxonomyRow
+          label="หมวดหมู่"
+          items={categories}
+          hrefBase="/product-category"
+          variant="teal"
+        />
       )}
       {tags.length > 0 && (
-        <TaxonomyRow label="แท็ก" items={tags} paramName="tag" variant="peach" />
+        <TaxonomyRow
+          label="แท็ก"
+          items={tags}
+          hrefBase="/product-tag"
+          variant="peach"
+        />
       )}
     </div>
   );
@@ -23,12 +33,12 @@ export function ProductTaxonomy({
 function TaxonomyRow({
   label,
   items,
-  paramName,
+  hrefBase,
   variant,
 }: {
   label: string;
   items: string[];
-  paramName: string;
+  hrefBase: string;
   variant: "peach" | "teal";
 }) {
   const cls =
@@ -41,7 +51,7 @@ function TaxonomyRow({
       {items.map((t) => (
         <Link
           key={t}
-          href={`/?${paramName}=${encodeURIComponent(t)}`}
+          href={`${hrefBase}/${encodeURIComponent(t)}`}
           className={`text-xs rounded-full px-2.5 py-1 font-medium transition ${cls}`}
         >
           {t}

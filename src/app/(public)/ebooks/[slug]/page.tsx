@@ -8,6 +8,7 @@ import { OwnedProductsProvider } from "@/components/shop/owned-products-provider
 import { CartOrOwnedButton } from "@/components/shop/cart-or-owned-button";
 import { BuyNowButton } from "@/components/shop/buy-now-button";
 import { ProductTaxonomy } from "@/components/shop/product-taxonomy";
+import { ProductGallery } from "@/components/shop/product-gallery";
 import { jsonLdString, productJsonLd, productMetadata } from "@/lib/seo";
 
 function parseList(raw: string | null): string[] {
@@ -83,20 +84,20 @@ export default async function EbookDetailPage({ params }: { params: Promise<{ sl
     />
     <div className="mx-auto max-w-6xl px-4 pt-10 pb-20 grid lg:grid-cols-2 gap-10">
       <div>
-        <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-cream border border-peach-100 shadow-lg">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={fullUrl(p.coverImageKey)} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
-        </div>
-        {previews.length > 0 && (
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {previews.map((k, i) => (
-              <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden bg-cream border border-peach-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={thumbUrl(k)} alt={`ตัวอย่างอีบุ๊ก ${p.name} หน้า ${i + 1}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
-              </div>
-            ))}
-          </div>
-        )}
+        <ProductGallery
+          slides={[
+            { full: fullUrl(p.coverImageKey), thumb: thumbUrl(p.coverImageKey), alt: p.name },
+            ...previews.map((k, i) => ({
+              full: fullUrl(k),
+              thumb: thumbUrl(k),
+              alt: `ตัวอย่างอีบุ๊ก ${p.name} หน้า ${i + 1}`,
+            })),
+          ]}
+          mainAspectClass="aspect-[3/4]"
+          thumbAspectClass="aspect-[3/4]"
+          thumbCols={3}
+          mainShadow
+        />
       </div>
       <div>
         <span className="inline-block text-xs font-semibold uppercase bg-teal-500 text-white rounded-full px-2 py-0.5">

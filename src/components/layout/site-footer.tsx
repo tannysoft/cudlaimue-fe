@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 bg-teal-500 text-white/90">
+    <footer className="mt-10 md:mt-20 bg-teal-500 text-white/90">
       <div className="mx-auto max-w-6xl px-4 py-10 grid gap-8 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-3">
@@ -11,7 +11,7 @@ export function SiteFooter() {
             <span className="font-[family-name:var(--font-display)] text-xl">คัดลายมือ</span>
           </div>
           <p className="mt-3 text-sm text-white/80 leading-relaxed">
-            ฟอนต์ลายมือสไตล์น่ารัก อีบุ๊กดิจิทัล และบทความสร้างแรงบันดาลใจ
+            ฟอนต์ลายมือน่ารัก ดิจิทัลอีบุ๊ก และเทมเพลตสำหรับเขียนบันทึก
             — ใช้ได้ทั้งส่วนตัวและเชิงพาณิชย์
           </p>
         </div>
@@ -30,8 +30,26 @@ export function SiteFooter() {
         <div className="text-sm">
           <h4 className="font-semibold mb-3">ติดต่อ</h4>
           <ul className="space-y-1.5 text-white/80">
-            <li>Email: hello@cudlaimue.com</li>
-            <li>LINE: @cudlaimue</li>
+            <li>
+              Email:{" "}
+              <a
+                href="mailto:cudlaimue@gmail.com"
+                className="hover:text-white underline decoration-white/30 hover:decoration-white underline-offset-2"
+              >
+                cudlaimue@gmail.com
+              </a>
+            </li>
+            <li>
+              LINE:{" "}
+              <a
+                href="https://line.me/R/ti/p/@595tsawy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white underline decoration-white/30 hover:decoration-white underline-offset-2"
+              >
+                @cudlaimue
+              </a>
+            </li>
           </ul>
         </div>
       </div>

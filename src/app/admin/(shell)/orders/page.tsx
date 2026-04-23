@@ -70,7 +70,8 @@ export default async function AdminOrdersPage({
         {list.length === 0 ? (
           <EmptyState q={q} />
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[780px]">
             <thead>
               <tr className="text-xs uppercase tracking-wider text-ink/50 border-b border-peach-100 bg-[#fcf8f1]">
                 <th className="text-left px-5 py-3 font-medium">เลขที่</th>
@@ -127,6 +128,7 @@ export default async function AdminOrdersPage({
               ))}
             </tbody>
           </table>
+          </div>
         )}
         <Pager
           page={page}

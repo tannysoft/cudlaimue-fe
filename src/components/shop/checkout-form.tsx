@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { readCart, readCoupon, clearCart } from "@/lib/cart-client";
+import { Tag, X } from "lucide-react";
+import { readCart, readCoupon, clearCoupon, clearCart } from "@/lib/cart-client";
 import { formatTHB } from "@/lib/utils";
 import { THAI_PROVINCE_OPTIONS } from "@/lib/thai-provinces";
 import { ComboboxSelect } from "@/components/ui/combobox-select";
@@ -40,6 +41,11 @@ export function CheckoutForm({
   const [error, setError] = useState<string | null>(null);
   const [province, setProvince] = useState<string>(normalizeProvince(user.province));
   const [district, setDistrict] = useState<string>(user.district);
+  const [coupon, setCoupon] = useState<{
+    code: string;
+    discountSatang: number;
+  } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -60,6 +66,58 @@ export function CheckoutForm({
   }, []);
 
   const subtotal = items.reduce((s, i) => s + i.priceSatang * i.qty, 0);
+
+  // Re-validate the stored coupon whenever items/subtotal change so the
+  // summary shows the live discount (and flags codes that are no longer
+  // applicable — e.g. user already redeemed it).
+  useEffect(() => {
+    const code = readCoupon();
+    if (!code || items.length === 0 || subtotal <= 0) {
+      setCoupon(null);
+      setCouponError(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/coupons/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code,
+            subtotalSatang: subtotal,
+            items: items.map((i) => ({
+              productId: i.productId,
+              priceSatang: i.priceSatang,
+              qty: i.qty,
+            })),
+          }),
+        });
+        const d = (await r.json()) as
+          | { valid: true; code: string; discountSatang: number }
+          | { valid: false; message: string };
+        if (cancelled) return;
+        if (d.valid) {
+          setCoupon({ code: d.code, discountSatang: d.discountSatang });
+          setCouponError(null);
+        } else {
+          setCoupon(null);
+          setCouponError(d.message);
+        }
+      } catch {
+        if (!cancelled) {
+          setCoupon(null);
+          setCouponError(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [items, subtotal]);
+
+  const discount = coupon?.discountSatang ?? 0;
+  const total = Math.max(0, subtotal - discount);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -193,11 +251,63 @@ export function CheckoutForm({
             </li>
           ))}
         </ul>
-        <div className="flex items-baseline justify-between mt-4 border-t border-peach-100 pt-3">
-          <span className="text-base text-ink/80 font-medium">ยอดที่ต้องชำระ</span>
-          <span className="font-[family-name:var(--font-display)] text-2xl font-bold text-peach-600">
-            {formatTHB(subtotal)}
-          </span>
+        <div className="mt-4 border-t border-peach-100 pt-3 space-y-2">
+          <div className="flex items-baseline justify-between text-sm">
+            <span className="text-ink/60">ยอดสินค้า</span>
+            <span className="text-ink/80 tabular-nums">{formatTHB(subtotal)}</span>
+          </div>
+
+          {coupon && (
+            <div className="flex items-baseline justify-between text-sm">
+              <span className="inline-flex items-center gap-1.5 text-teal-700">
+                <Tag className="w-3.5 h-3.5" />
+                ส่วนลด
+                <span className="font-mono text-xs bg-teal-50 text-teal-700 rounded-full px-1.5 py-0.5">
+                  {coupon.code}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearCoupon();
+                    setCoupon(null);
+                    setCouponError(null);
+                  }}
+                  className="text-ink/40 hover:text-red-500"
+                  aria-label="ลบคูปอง"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+              <span className="text-teal-700 tabular-nums">
+                −{formatTHB(discount)}
+              </span>
+            </div>
+          )}
+
+          {couponError && (
+            <div className="rounded-lg bg-red-50 border border-red-100 px-3 py-2 text-xs text-red-600">
+              คูปอง <span className="font-mono">{readCoupon()}</span>: {couponError}
+              <button
+                type="button"
+                onClick={() => {
+                  clearCoupon();
+                  setCouponError(null);
+                }}
+                className="ml-1.5 underline hover:text-red-700"
+              >
+                ลบออก
+              </button>
+            </div>
+          )}
+
+          <div className="flex items-baseline justify-between pt-2 border-t border-peach-100">
+            <span className="text-base text-ink/80 font-medium">
+              ยอดที่ต้องชำระ
+            </span>
+            <span className="font-[family-name:var(--font-display)] text-2xl font-bold text-peach-600 tabular-nums">
+              {formatTHB(total)}
+            </span>
+          </div>
         </div>
         {error && (
           <div className="mt-3 text-sm text-red-600 rounded-lg bg-red-50 border border-red-100 px-3 py-2">

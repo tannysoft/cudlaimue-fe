@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { db } from "@/lib/db";
-import { orders, orderItems, entitlements } from "@/lib/db/schema";
+import { orders } from "@/lib/db/schema";
 import { env } from "@/lib/cf";
 import { hmacSha256Hex, timingSafeEqual } from "@/lib/crypto";
-import { triggerEbookPrerender } from "@/lib/ebook-prerender-trigger";
-import { newId, now } from "@/lib/utils";
+import { finalizeOrderPaid } from "@/lib/order-finalize";
+import { now } from "@/lib/utils";
 
 
 /**
@@ -57,39 +57,16 @@ export async function POST(req: NextRequest) {
     })
     .where(eq(orders.id, order.id));
 
-  if (paid && order.status !== "paid") {
-    const items = await db().select().from(orderItems).where(eq(orderItems.orderId, order.id));
-    const ts = now();
-    // Use individual inserts with `onConflictDoNothing` so a replayed webhook
-    // never creates duplicate entitlements (unique index on user_id+product_id).
-    for (const it of items) {
-      try {
-        await db().insert(entitlements).values({
-          id: newId("ent"),
-          userId: order.userId,
-          productId: it.productId,
-          orderId: order.id,
-          grantedAt: ts,
-        });
-      } catch {
-        // likely UNIQUE constraint — already entitled, ignore.
-      }
-    }
-
-    // Kick off background rasterization for ebooks in this order so the
-    // customer's first page view is a cache hit. The recipient endpoint
-    // batch-renders ALL pages of each ebook in one browser session.
-    const ebookIds = items
-      .filter((i) => i.productType === "ebook")
-      .map((i) => i.productId);
-    if (ebookIds.length) {
-      const { ctx } = getCloudflareContext();
-      await triggerEbookPrerender(
-        ctx.waitUntil.bind(ctx),
-        req.nextUrl.origin,
-        ebookIds.map((id) => ({ productId: id, orderId: order.id })),
-      );
-    }
+  // Grant entitlements on *every* paid signal — idempotent via the unique
+  // (user_id, product_id) index. Previously we gated on `order.status !==
+  // "paid"`, which dropped entitlements when the polling endpoint flipped
+  // status to paid first.
+  if (paid) {
+    const { ctx } = getCloudflareContext();
+    await finalizeOrderPaid(order.id, {
+      origin: req.nextUrl.origin,
+      waitUntil: ctx.waitUntil.bind(ctx),
+    });
   }
 
   return NextResponse.json({ ok: true });

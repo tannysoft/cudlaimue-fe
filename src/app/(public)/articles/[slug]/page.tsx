@@ -40,7 +40,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const { categories, tags } = extractArticleTerms(a);
   const plainTitle = stripHtml(a.title.rendered, 110);
   return (
-    <article className="mx-auto max-w-3xl px-4 py-10">
+    <article className="mx-auto max-w-3xl px-4 pt-10 md:py-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
