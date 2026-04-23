@@ -30,3 +30,5 @@ tsconfig.tsbuildinfo
 
 # drizzle
 drizzle/
+
+backup.sql

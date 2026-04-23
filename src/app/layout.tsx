@@ -8,7 +8,7 @@ import {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? process.env.APP_URL ?? "https://cudlaimue.com",
+    process.env.NEXT_PUBLIC_APP_URL ?? process.env.APP_URL ?? "https://www.cudlaimue.com",
   ),
   title: {
     default: "คัดลายมือ — ฟอนต์ลายมือ & อีบุ๊ก",

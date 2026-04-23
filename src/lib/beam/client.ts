@@ -68,7 +68,7 @@ async function beamFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
       Authorization: `Basic ${basic}`,
       "Content-Type": "application/json",
       Accept: "application/json",
-      "User-Agent": "cudlaimue/1.0 (+https://cudlaimue.com)",
+      "User-Agent": "cudlaimue/1.0 (+https://www.cudlaimue.com)",
       ...(init.headers ?? {}),
     },
   });

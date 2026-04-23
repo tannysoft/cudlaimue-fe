@@ -28,7 +28,7 @@ export function siteOrigin(): string {
   return (
     process.env.NEXT_PUBLIC_APP_URL ??
     process.env.APP_URL ??
-    "https://cudlaimue.com"
+    "https://www.cudlaimue.com"
   );
 }
 

@@ -9,11 +9,11 @@ assets = { directory = ".open-next/assets", binding = "ASSETS" }
 # By default this deploys to  cudlaimue-fe.<account>.workers.dev  (preview).
 # When ready to cutover to the real domain, uncomment the `routes` block.
 # ----------------------------------------------------------------------------
-workers_dev = true
-# routes = [
-#   { pattern = "cudlaimue.com/*", zone_name = "cudlaimue.com" },
-#   { pattern = "www.cudlaimue.com/*", zone_name = "cudlaimue.com" },
-# ]
+workers_dev = false
+routes = [
+  { pattern = "cudlaimue.com/*", zone_name = "cudlaimue.com" },
+  { pattern = "www.cudlaimue.com/*", zone_name = "cudlaimue.com" },
+]
 
 # ---------- Bindings (same for dev/preview/prod) ----------
 
@@ -49,9 +49,9 @@ binding = "IMAGES"
 # are computed from the incoming request in code.
 
 [vars]
-WP_API_URL = "https://www.cudlaimue.com/wp-json/wp/v2"
-WC_API_URL = "https://www.cudlaimue.com/wp-json/wc/v3"
-LINE_LOGIN_CHANNEL_ID = "2009824355"
+WP_API_URL = "https://cms.cudlaimue.com/wp-json/wp/v2"
+WC_API_URL = "https://cms.cudlaimue.com/wp-json/wc/v3"
+LINE_LOGIN_CHANNEL_ID = "1657797454"
 LIFF_ID = "1657797454-Bb4wzbq8"
 BEAM_API_URL = "https://api.beamcheckout.com/api/v1"
 BEAM_MERCHANT_ID = "cudlaimue"

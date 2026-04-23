@@ -22,9 +22,17 @@ if (!existsSync(dotVarsPath)) {
 
 const raw = readFileSync(dotVarsPath, "utf8");
 const vars = {};
-// These live in wrangler.toml [vars] — don't push as secrets or they'll
-// shadow the toml values and get out of sync.
-const SKIP = new Set(["CLOUDFLARE_ACCOUNT_ID"]);
+// These live in wrangler.toml [vars] — don't push as secrets or wrangler
+// will reject the upload with "Binding name already in use".
+const SKIP = new Set([
+  "CLOUDFLARE_ACCOUNT_ID",
+  "WP_API_URL",
+  "WC_API_URL",
+  "LINE_LOGIN_CHANNEL_ID",
+  "LIFF_ID",
+  "BEAM_API_URL",
+  "BEAM_MERCHANT_ID",
+]);
 for (const line of raw.split(/\r?\n/)) {
   const trimmed = line.trim();
   if (!trimmed || trimmed.startsWith("#")) continue;
