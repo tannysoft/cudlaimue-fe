@@ -11,9 +11,11 @@ const PatchSchema = z.object({
   value: z.number().int().positive().optional(),
   minSubtotalSatang: z.number().int().nonnegative().nullable().optional(),
   maxUses: z.number().int().positive().nullable().optional(),
+  maxUsesPerUser: z.number().int().positive().nullable().optional(),
   expiresAt: z.number().int().positive().nullable().optional(),
   isActive: z.boolean().optional(),
   productIds: z.array(z.string()).nullable().optional(),
+  notes: z.string().max(1000).nullable().optional(),
 });
 
 export async function PATCH(
@@ -29,10 +31,14 @@ export async function PATCH(
       { status: 400 },
     );
   }
-  const { productIds: rawIds, ...rest } = body;
+  const { productIds: rawIds, notes: rawNotes, ...rest } = body;
   const update: Partial<typeof coupons.$inferInsert> = { ...rest, updatedAt: now() };
   if (rawIds !== undefined) {
     update.productIds = rawIds && rawIds.length ? JSON.stringify(rawIds) : null;
+  }
+  if (rawNotes !== undefined) {
+    const trimmed = rawNotes?.trim();
+    update.notes = trimmed ? trimmed : null;
   }
   await db().update(coupons).set(update).where(eq(coupons.id, id));
   await db().insert(adminAudit).values({

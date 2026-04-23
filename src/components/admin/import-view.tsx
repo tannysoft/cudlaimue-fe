@@ -354,7 +354,7 @@ function ProductsPanel() {
         ) : !rows || rows.length === 0 ? (
           <EmptyState icon={<Download className="w-6 h-6" />} label="ไม่พบสินค้าใน WooCommerce" />
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[800px]">
             <thead>
               <TableHead>
                 <th className="w-10 px-5 py-3">
@@ -424,7 +424,7 @@ function ProductsPanel() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 
@@ -689,7 +689,7 @@ function CustomersPanel() {
         ) : !rows || rows.length === 0 ? (
           <EmptyState icon={<UsersIcon className="w-6 h-6" />} label="ไม่พบลูกค้า" />
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[800px]">
             <thead>
               <TableHead>
                 <th className="w-10 px-5 py-3">
@@ -745,7 +745,7 @@ function CustomersPanel() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
         {rows && rows.length > 0 && totalPages > 1 && (
           <Pagination page={page} totalPages={totalPages} total={total} onChange={(p) => load(p)} />
@@ -948,7 +948,7 @@ function CouponsPanel() {
         ) : !rows || rows.length === 0 ? (
           <EmptyState icon={<Ticket className="w-6 h-6" />} label="ไม่พบคูปอง" />
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[800px]">
             <thead>
               <TableHead>
                 <th className="text-left px-5 py-3 font-medium">โค้ด</th>
@@ -993,7 +993,7 @@ function CouponsPanel() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
         {rows && rows.length > 0 && totalPages > 1 && (
           <Pagination page={page} totalPages={totalPages} total={total} onChange={(p) => load(p)} />
@@ -1196,7 +1196,7 @@ function OrdersPanel() {
         ) : !rows || rows.length === 0 ? (
           <EmptyState icon={<ShoppingBag className="w-6 h-6" />} label="ไม่พบคำสั่งซื้อ" />
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm min-w-[800px]">
             <thead>
               <TableHead>
                 <th className="text-left px-5 py-3 font-medium">เลขที่</th>
@@ -1233,7 +1233,7 @@ function OrdersPanel() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
         {rows && rows.length > 0 && totalPages > 1 && (
           <Pagination page={page} totalPages={totalPages} total={total} onChange={(p) => load(p)} />

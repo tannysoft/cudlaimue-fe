@@ -5,15 +5,20 @@ import { entitlements, products, downloadLogs } from "@/lib/db/schema";
 import { getSessionUser } from "@/lib/auth/session";
 import { r2Get } from "@/lib/r2";
 import { newId, now } from "@/lib/utils";
+import { productFiles } from "@/lib/product-files";
 
 /**
  * Authenticated template download stream. Same pattern as fonts — requires
  * active session + entitlement, logs each download, streams direct from R2.
+ *
+ *   GET /api/library/templates/{productId}             → first file (default)
+ *   GET /api/library/templates/{productId}?file=<key>  → specific file by key
  */
 export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   if (!user) return new Response("Unauthorized", { status: 401 });
   const { id } = await ctx.params;
+  const wantKey = req.nextUrl.searchParams.get("file");
 
   const rows = await db()
     .select({ p: products, ent: entitlements })
@@ -23,12 +28,14 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     .limit(1);
   if (!rows.length) return new Response("Forbidden", { status: 403 });
   const { p } = rows[0];
-  if (p.type !== "template" || !p.fileKey) {
-    return new Response("Not a downloadable template", { status: 404 });
-  }
+  if (p.type !== "template") return new Response("Not a template", { status: 404 });
 
-  const obj = await r2Get(p.fileKey);
-  if (!obj) return new Response("File not found", { status: 404 });
+  const all = productFiles(p);
+  const target = wantKey ? all.find((f) => f.key === wantKey) : all[0];
+  if (!target) return new Response("No file for this template", { status: 404 });
+
+  const obj = await r2Get(target.key);
+  if (!obj) return new Response("File missing in R2", { status: 404 });
 
   db().insert(downloadLogs).values({
     id: newId("dl"),
@@ -40,7 +47,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     createdAt: now(),
   }).catch(() => {});
 
-  const filename = p.fileName ?? `${p.slug}.zip`;
+  const filename = target.name;
   return new Response(obj.body as ReadableStream, {
     headers: {
       "Content-Type": obj.httpMetadata?.contentType ?? "application/octet-stream",

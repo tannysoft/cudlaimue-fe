@@ -49,7 +49,7 @@ export default async function HomePage() {
             CTA buttons live INSIDE the hero, anchored to the bottom over a
             soft cream-fade scrim so they're legible on any image.
           */}
-          <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[2/1] overflow-hidden -mt-16">
+          <div className="relative w-full aspect-[6/5] sm:aspect-[16/9] md:aspect-[2/1] overflow-hidden -mt-16">
             <Image
               src={heroBgUrl}
               alt="คัดลายมือ — ฟอนต์ลายมือ อีบุ๊ก และเทมเพลต"
@@ -60,9 +60,10 @@ export default async function HomePage() {
               unoptimized
             />
             {/* Bottom scrim for button contrast (cream-fade so it blends
-                with the page background below). */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-cream via-cream/70 to-transparent" />
-            <div className="absolute inset-x-0 bottom-6 md:bottom-10 flex flex-wrap gap-3 justify-center px-4 font-[family-name:var(--font-display)]">
+                with the page background below). Desktop only — mobile shows
+                buttons directly over the image without a gradient. */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-cream via-cream/70 to-transparent hidden md:block" />
+            <div className="absolute inset-x-0 bottom-4.5 md:bottom-10 flex flex-wrap gap-3 justify-center px-4 font-[family-name:var(--font-display)]">
               <Link
                 href="/fonts"
                 className="rounded-full bg-peach-500 hover:bg-peach-600 text-white font-medium px-6 py-2.5 shadow-md hover:shadow-lg transition"
@@ -130,7 +131,7 @@ export default async function HomePage() {
 
       {/* Featured products */}
       {featured.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-16">
+        <section className="mx-auto max-w-6xl px-4 py-10 md:py-16">
           <div className="flex items-end justify-between">
             <div>
               <h2 className="font-[family-name:var(--font-display)] text-2xl md:text-3xl text-teal-600 font-bold">
@@ -153,14 +154,14 @@ export default async function HomePage() {
       )}
 
       {/* Categories strip */}
-      <section className="mx-auto max-w-6xl px-4 mt-16 md:mt-6 grid md:grid-cols-3 gap-6">
+      <section className="mx-auto max-w-6xl px-4 mt-8 md:mt-6 grid md:grid-cols-3 gap-4 md:gap-6">
         <Link
           href="/fonts"
           className="group relative overflow-hidden rounded-3xl bg-peach-500 text-white p-8 min-h-48 flex items-end hover:shadow-lg transition"
         >
           <div className="relative z-10">
             <h3 className="font-[family-name:var(--font-display)] text-2xl font-bold">ฟอนต์ลายมือ</h3>
-            <p className="text-white/90 mt-1">ตัวอักษรเขียนมือ สไตล์อบอุ่น ใช้ได้ทั้งส่วนตัวและเชิงพาณิชย์</p>
+            <p className="text-white/90 mt-1">ฟอนต์ลายมือน่ารัก เป็นระเบียบ อ่านง่าย สบายตา ใช้ได้ทั้งส่วนตัวและเชิงพาณิชย์</p>
           </div>
           <div className="absolute -top-6 -right-6 text-[140px] font-bold text-white/10 font-[family-name:var(--font-display)] select-none leading-none">
             Aa
@@ -182,7 +183,7 @@ export default async function HomePage() {
         >
           <div className="relative z-10">
             <h3 className="font-[family-name:var(--font-display)] text-2xl font-bold">เทมเพลต</h3>
-            <p className="text-white/90 mt-1">ไฟล์ .psd / .ai / .pdf พร้อมใช้ ปรับแต่งตามสไตล์ของคุณ</p>
+            <p className="text-white/90 mt-1">Journal Template สำหรับใช้เขียนบันทึก</p>
           </div>
           <LayoutTemplate className="absolute -top-4 -right-4 w-44 h-44 text-white/10" strokeWidth={1.5} />
         </Link>
@@ -190,11 +191,11 @@ export default async function HomePage() {
 
       {/* Articles — magazine layout: 1 hero + N stacked compact */}
       {articles.length > 0 && (
-        <section className="relative bg-cream/60 mt-20 py-16 md:py-24">
+        <section className="relative bg-cream/60 mt-12 md:mt-20 pt-12 md:pt-24 pb-0 md:pb-2">
           {/* Hairline divider above to separate from product strip */}
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-peach-200 to-transparent" />
           <div className="mx-auto max-w-6xl px-4">
-            <div className="flex flex-col items-center text-center mb-10">
+            <div className="flex flex-col items-center text-center mb-8 md:mb-10">
               <span className="text-[11px] uppercase tracking-[0.3em] text-peach-600 font-semibold">
                 Journal
               </span>
@@ -215,7 +216,7 @@ export default async function HomePage() {
               )}
             </div>
 
-            <div className="mt-10 text-center">
+            <div className="mt-8 md:mt-10 text-center">
               <Link
                 href="/articles"
                 className="inline-flex items-center gap-1.5 rounded-full border border-peach-200 bg-white hover:border-peach-400 hover:bg-peach-50 text-peach-700 text-sm font-medium px-5 py-2.5 transition"

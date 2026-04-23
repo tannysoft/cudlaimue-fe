@@ -52,7 +52,7 @@ export function CartButton() {
       <Link
         href="/cart"
         aria-label="ตะกร้าสินค้า"
-        className="relative inline-flex items-center gap-1.5 rounded-full px-3 sm:px-4 h-10 text-ink/70 hover:text-peach-700 hover:bg-peach-100 transition"
+        className="relative inline-flex items-center justify-center sm:justify-start sm:gap-1.5 rounded-full w-10 sm:w-auto sm:px-4 h-10 text-ink/70 hover:text-peach-700 hover:bg-peach-100 transition"
       >
         <ShoppingBag className="w-5 h-5 sm:w-4 sm:h-4" strokeWidth={1.75} />
         <span className="hidden sm:inline text-sm">ตะกร้าสินค้า</span>
@@ -64,13 +64,13 @@ export function CartButton() {
     <Link
       href="/cart"
       aria-label={`ตะกร้าสินค้า (${count} รายการ)`}
-      className={`relative inline-flex items-center gap-1.5 rounded-full px-3 sm:px-4 h-10 bg-peach-500 hover:bg-peach-600 text-white text-sm font-medium shadow-sm hover:shadow transition will-change-transform ${
+      className={`relative inline-flex items-center justify-center sm:justify-start sm:gap-1.5 rounded-full w-10 sm:w-auto sm:px-4 h-10 bg-peach-500 hover:bg-peach-600 text-white text-sm font-medium shadow-sm hover:shadow transition will-change-transform ${
         pulse ? "cart-pulse" : ""
       }`}
     >
-      <ShoppingBag className="w-4 h-4" strokeWidth={2} />
+      <ShoppingBag className="w-5 h-5 sm:w-4 sm:h-4" strokeWidth={2} />
       <span className="hidden sm:inline">ตะกร้าสินค้า</span>
-      <span className="font-[family-name:var(--font-display)] tabular-nums leading-none inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-white/25 text-white text-xs">
+      <span className="font-[family-name:var(--font-display)] tabular-nums leading-none inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-peach-600 ring-2 ring-cream text-white text-[10px] absolute -top-1 -right-1 sm:static sm:min-w-5 sm:h-5 sm:px-1 sm:bg-white/25 sm:ring-0 sm:text-xs">
         {count}
       </span>
       <style>{`

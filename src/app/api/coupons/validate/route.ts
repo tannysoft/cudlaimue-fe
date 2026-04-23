@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { validateCoupon } from "@/lib/coupon";
+import { getSessionUser } from "@/lib/auth/session";
 
 /**
  * Public coupon validation — used by the cart UI to preview the discount
@@ -31,7 +32,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "invalid_body" }, { status: 400 });
   }
   const { code, subtotalSatang, items } = parsed.data;
-  const r = await validateCoupon(code, subtotalSatang, items);
+  // Pass the session user when available so the "1 per user" limit is
+  // enforced during the preview too — otherwise the user would see a valid
+  // discount in the cart then get rejected at checkout.
+  const session = await getSessionUser();
+  const r = await validateCoupon(code, subtotalSatang, items, session?.id);
   if (!r.valid) {
     return NextResponse.json(
       { valid: false, message: r.message, code: r.code ?? code },

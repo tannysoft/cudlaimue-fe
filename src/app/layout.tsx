@@ -23,15 +23,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     title: "คัดลายมือ — ฟอนต์ลายมือ & อีบุ๊ก",
-    description: "ฟอนต์ลายมือสไตล์น่ารัก และอีบุ๊กดิจิทัล",
+    description: "รัก และอีบุ๊กดิจิทัล",
     siteName: "คัดลายมือ",
     locale: "th_TH",
     images: ["/brand/cover.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "คัดลายมือ — ฟอนต์ลายมือ & อีบุ๊ก",
-    description: "ฟอนต์ลายมือสไตล์น่ารัก และอีบุ๊กดิจิทัล",
+    title: "คัดลายมือ — ฟอนต์ลายมือ, อีบุ๊ก และเทมเพลต",
+    description: "ฟอนต์ลายมือน่ารัก ดิจิทัลอีบุ๊ก และเทมเพลตสำหรับเขียนบันทึก",
     images: ["/brand/cover.png"],
   },
   manifest: "/favicon/site.webmanifest",

@@ -198,6 +198,9 @@ export const coupons = sqliteTable(
     value: integer("value").notNull(), // percent → 1..100, fixed → satang
     minSubtotalSatang: integer("min_subtotal_satang"), // null = no min
     maxUses: integer("max_uses"), // null = unlimited
+    // Per-user redemption cap. null = unlimited, 1 = classic "one per user".
+    // Counts paid/refunded orders only.
+    maxUsesPerUser: integer("max_uses_per_user"),
     usedCount: integer("used_count").notNull().default(0),
     expiresAt: integer("expires_at"), // unix ms, null = no expiry
     isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
@@ -205,6 +208,8 @@ export const coupons = sqliteTable(
     // string = applies to every product in the cart. When set, the coupon's
     // discount is computed only against the eligible items' subtotal.
     productIds: text("product_ids"),
+    // Internal admin note — reason/campaign context. Not visible to customers.
+    notes: text("notes"),
     createdAt: integer("created_at").notNull(),
     updatedAt: integer("updated_at").notNull(),
   },

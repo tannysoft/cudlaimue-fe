@@ -74,8 +74,11 @@ export function CouponEditor({
       : null;
     const maxRaw = String(form.get("maxUses") ?? "").trim();
     const maxUses = maxRaw ? parseInt(maxRaw, 10) : null;
+    const maxPerUserRaw = String(form.get("maxUsesPerUser") ?? "").trim();
+    const maxUsesPerUser = maxPerUserRaw ? parseInt(maxPerUserRaw, 10) : null;
     const expiresRaw = String(form.get("expiresAt") ?? "").trim();
     const expiresAt = expiresRaw ? new Date(expiresRaw).getTime() : null;
+    const notes = String(form.get("notes") ?? "").trim() || null;
 
     const productIds = restricted ? Array.from(selectedIds) : null;
     if (restricted && productIds!.length === 0) {
@@ -85,8 +88,8 @@ export function CouponEditor({
 
     start(async () => {
       const payload = isNew
-        ? { code, type, value, minSubtotalSatang, maxUses, expiresAt, isActive, productIds }
-        : { type, value, minSubtotalSatang, maxUses, expiresAt, isActive, productIds };
+        ? { code, type, value, minSubtotalSatang, maxUses, maxUsesPerUser, expiresAt, isActive, productIds, notes }
+        : { type, value, minSubtotalSatang, maxUses, maxUsesPerUser, expiresAt, isActive, productIds, notes };
       const url = isNew ? "/api/admin/coupons" : `/api/admin/coupons/${coupon!.id}`;
       const method = isNew ? "POST" : "PATCH";
       const r = await fetch(url, {
@@ -266,6 +269,21 @@ export function CouponEditor({
             </Hint>
           </Field>
         </div>
+        <Field label="จำนวนครั้งที่ใช้ได้ต่อผู้ใช้ 1 คน">
+          <input
+            type="number"
+            name="maxUsesPerUser"
+            min={1}
+            step={1}
+            defaultValue={coupon?.maxUsesPerUser ?? ""}
+            placeholder="ไม่จำกัด"
+            className={inputClass}
+          />
+          <Hint>
+            นับเฉพาะออเดอร์ที่จ่ายเงินสำเร็จ · <strong>1</strong> = ใช้ได้คนละครั้งเดียว
+            · <strong>เว้นว่าง</strong> = ไม่จำกัด (user คนเดิมใช้ซ้ำได้เรื่อยๆ)
+          </Hint>
+        </Field>
         <Field label="วันหมดอายุ">
           <input
             type="datetime-local"
@@ -296,6 +314,22 @@ export function CouponEditor({
             onChange={setSelectedIds}
           />
         )}
+      </Card>
+
+      <Card title="โน้ตภายใน" className="mt-4">
+        <Field label="โน้ต (เห็นเฉพาะแอดมิน)">
+          <textarea
+            name="notes"
+            defaultValue={coupon?.notes ?? ""}
+            rows={3}
+            maxLength={1000}
+            placeholder="เช่น แจกทาง IG live 1 เม.ย., สำหรับอินฟลูฯ แคมเปญปีใหม่…"
+            className={`${inputClass} resize-y min-h-[80px]`}
+          />
+          <Hint>
+            บันทึกบริบท/เหตุผลที่ออกโค้ดนี้ · ลูกค้าไม่เห็น · สูงสุด 1000 ตัวอักษร
+          </Hint>
+        </Field>
       </Card>
 
       <Card title="สถานะ" className="mt-4">

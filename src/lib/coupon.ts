@@ -1,7 +1,7 @@
 import "server-only";
-import { eq } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { coupons, type Coupon } from "@/lib/db/schema";
+import { coupons, orders, type Coupon } from "@/lib/db/schema";
 import { now } from "@/lib/utils";
 
 /**
@@ -28,6 +28,7 @@ export async function validateCoupon(
   rawCode: string,
   subtotalSatang: number,
   items?: CouponItem[],
+  userId?: string,
 ): Promise<ValidateResult> {
   const code = rawCode.trim().toUpperCase();
   if (!code) return { valid: false, message: "กรอกโค้ดส่วนลด" };
@@ -49,6 +50,31 @@ export async function validateCoupon(
 
   if (c.maxUses != null && c.usedCount >= c.maxUses) {
     return { valid: false, message: "โค้ดถูกใช้ครบจำนวนแล้ว", code };
+  }
+
+  // Per-user redemption cap — null = unlimited. Counts only paid/refunded
+  // orders so abandoned or failed checkouts leave the code reusable.
+  if (userId && c.maxUsesPerUser != null && c.maxUsesPerUser > 0) {
+    const [{ n }] = await db()
+      .select({ n: count() })
+      .from(orders)
+      .where(
+        and(
+          eq(orders.couponCode, c.code),
+          eq(orders.userId, userId),
+          inArray(orders.status, ["paid", "refunded"]),
+        ),
+      );
+    if (n >= c.maxUsesPerUser) {
+      return {
+        valid: false,
+        message:
+          c.maxUsesPerUser === 1
+            ? "คุณใช้โค้ดนี้ไปแล้ว (1 ครั้งต่อ 1 ผู้ใช้)"
+            : `คุณใช้โค้ดนี้ครบ ${c.maxUsesPerUser} ครั้งแล้ว`,
+        code,
+      };
+    }
   }
 
   // Per-product restriction — discount applies only to matching items.

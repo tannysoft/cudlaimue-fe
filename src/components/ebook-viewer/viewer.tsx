@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Scan, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Maximize2, Minimize2, Scan, X } from "lucide-react";
 
 export function EbookViewer({
   productId,
@@ -19,8 +19,55 @@ export function EbookViewer({
   // screen = whole page fits in viewport height (no scroll)
   // full   = stretch to browser width
   const [fit, setFit] = useState<"page" | "screen" | "full">("page");
+  const [preloaded, setPreloaded] = useState(0);
+  const [preloadError, setPreloadError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const isReady = preloaded >= totalPages;
+
+  // Preload every page+watermark up-front so reader feels instant once open.
+  // We trigger the browser cache warm-up with plain <img> objects — each page
+  // endpoint returns the watermarked render so subsequent <img src> renders
+  // hit the HTTP cache.
+  useEffect(() => {
+    let cancelled = false;
+    let done = 0;
+    const failedPages: number[] = [];
+    const imgs: HTMLImageElement[] = [];
+
+    const finish = () => {
+      if (cancelled) return;
+      done += 1;
+      setPreloaded(done);
+      if (done >= totalPages && failedPages.length > 0) {
+        setPreloadError(
+          `โหลดบางหน้าไม่สำเร็จ (${failedPages.length} หน้า) — ลองรีเฟรชอีกครั้ง`,
+        );
+      }
+    };
+
+    for (let n = 1; n <= totalPages; n++) {
+      const img = new Image();
+      img.onload = finish;
+      img.onerror = () => {
+        failedPages.push(n);
+        finish();
+      };
+      img.src = `/api/library/ebooks/${productId}/page/${n}`;
+      imgs.push(img);
+    }
+
+    return () => {
+      cancelled = true;
+      // Best-effort cancel — browser may still finish in background, but we
+      // stop updating state.
+      for (const img of imgs) {
+        img.onload = null;
+        img.onerror = null;
+      }
+    };
+  }, [productId, totalPages]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0 });
@@ -50,6 +97,38 @@ export function EbookViewer({
   }, []);
 
   const src = `/api/library/ebooks/${productId}/page/${page}`;
+
+  if (!isReady) {
+    const pct = Math.min(100, Math.round((preloaded / Math.max(1, totalPages)) * 100));
+    return (
+      <div className="ebook-viewer h-full flex flex-col items-center justify-center bg-ink text-white px-6">
+        <Loader2 className="w-10 h-10 animate-spin text-peach-300" />
+        <div className="mt-6 font-[family-name:var(--font-display)] text-lg">
+          กำลังเตรียมอีบุ๊ก
+        </div>
+        <div className="mt-1 text-sm text-white/60">
+          สร้างลายน้ำและโหลดทุกหน้าให้พร้อม… {preloaded} / {totalPages} หน้า
+        </div>
+        <div className="mt-5 w-full max-w-xs h-1.5 rounded-full bg-white/10 overflow-hidden">
+          <div
+            className="h-full bg-peach-400 transition-[width] duration-300"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        {preloadError && (
+          <div className="mt-4 text-xs text-red-300 text-center max-w-sm">
+            {preloadError}
+          </div>
+        )}
+        <Link
+          href="/account/library"
+          className="mt-8 inline-flex items-center gap-1 text-white/60 hover:text-white text-sm"
+        >
+          <X className="w-4 h-4" /> ยกเลิก
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="ebook-viewer h-full flex flex-col">

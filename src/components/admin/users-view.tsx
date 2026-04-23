@@ -16,6 +16,7 @@ import {
 import {
   Users as UsersIcon,
   Shield,
+  ShieldOff,
   Plus,
   MoreHorizontal,
   Ban,
@@ -63,6 +64,7 @@ export function UsersView({
   const router = useRouter();
   const [addOpen, setAddOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<Row | null>(null);
+  const [confirmRole, setConfirmRole] = useState<Row | null>(null);
   const [pending, start] = useTransition();
   const [err, setErr] = useState<string | null>(null);
   const admins = users.filter((u) => u.role === "admin").length;
@@ -103,6 +105,26 @@ export function UsersView({
           `ไม่พบ (ไม่ใช่เพื่อน OA) ${d.notFound ?? 0} · ล้มเหลว ${d.failed ?? 0}\n` +
           `เหลือที่ยังไม่มี avatar: ${d.remaining ?? 0}`,
       );
+    });
+  }
+
+  function doToggleRole() {
+    if (!confirmRole) return;
+    const nextRole = confirmRole.role === "admin" ? "user" : "admin";
+    start(async () => {
+      setErr(null);
+      const r = await fetch(`/api/admin/users/${confirmRole.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: nextRole }),
+      });
+      if (!r.ok) {
+        const data = (await r.json().catch(() => ({}))) as { message?: string; error?: string };
+        setErr(data.message ?? data.error ?? "เปลี่ยนบทบาทไม่สำเร็จ");
+      } else {
+        setConfirmRole(null);
+        router.refresh();
+      }
     });
   }
 
@@ -178,7 +200,8 @@ export function UsersView({
             </div>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[820px]">
             <thead>
               <tr className="text-xs uppercase tracking-wider text-ink/50 border-b border-peach-100 bg-[#fcf8f1]">
                 <th className="text-left px-5 py-3 font-medium">ผู้ใช้</th>
@@ -266,13 +289,16 @@ export function UsersView({
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
-                      {u.id !== currentAdminId && (
+                      {u.id !== currentAdminId ? (
                         <RowMenu
                           user={u}
                           onBan={() => toggleBan(u)}
+                          onToggleRole={() => setConfirmRole(u)}
                           onDelete={() => setConfirmDelete(u)}
                           disabled={pending}
                         />
+                      ) : (
+                        <span className="w-8 h-8 inline-block" aria-hidden />
                       )}
                     </div>
                   </td>
@@ -280,6 +306,7 @@ export function UsersView({
               ))}
             </tbody>
           </table>
+          </div>
         )}
         <Pager
           page={page}
@@ -298,6 +325,23 @@ export function UsersView({
           setAddOpen(false);
           router.refresh();
         }}
+      />
+
+      <ConfirmDialog
+        open={!!confirmRole}
+        title={confirmRole?.role === "admin" ? "ถอดสิทธิ์แอดมิน" : "ตั้งเป็นแอดมิน"}
+        message={
+          confirmRole
+            ? confirmRole.role === "admin"
+              ? `ต้องการถอด "${confirmRole.displayName ?? confirmRole.email}" ออกจากแอดมินใช่ไหม? ผู้ใช้จะไม่สามารถเข้าถึงหน้าแอดมินได้อีก`
+              : `ต้องการตั้ง "${confirmRole.displayName ?? confirmRole.email}" เป็นแอดมินใช่ไหม? ผู้ใช้จะเข้าถึงหน้าแอดมินและจัดการข้อมูลได้ทั้งหมด`
+            : ""
+        }
+        confirmLabel={confirmRole?.role === "admin" ? "ถอดสิทธิ์" : "ตั้งเป็นแอดมิน"}
+        confirmVariant={confirmRole?.role === "admin" ? "danger" : "primary"}
+        pending={pending}
+        onClose={() => setConfirmRole(null)}
+        onConfirm={doToggleRole}
       />
 
       <ConfirmDialog
@@ -333,7 +377,7 @@ function OrderStats({ total, paid }: { total: number; paid: number }) {
       )}
       {other > 0 && (
         <span className="inline-flex items-center gap-1 text-xs bg-ink/5 text-ink/50 rounded-full px-2 py-0.5">
-          {other} รอ/อื่น
+          {other} รอ/ยกเลิก
         </span>
       )}
     </div>
@@ -343,14 +387,17 @@ function OrderStats({ total, paid }: { total: number; paid: number }) {
 function RowMenu({
   user,
   onBan,
+  onToggleRole,
   onDelete,
   disabled,
 }: {
   user: Row;
   onBan: () => void;
+  onToggleRole: () => void;
   onDelete: () => void;
   disabled: boolean;
 }) {
+  const isAdmin = user.role === "admin";
   return (
     <Menu as="div" className="relative inline-block">
       <MenuButton
@@ -361,8 +408,25 @@ function RowMenu({
       </MenuButton>
       <MenuItems
         anchor={{ to: "bottom end", gap: 4 }}
-        className="w-48 rounded-xl bg-white border border-peach-100 shadow-lg p-1 z-50 focus:outline-none"
+        className="w-52 rounded-xl bg-white border border-peach-100 shadow-lg p-1 z-50 focus:outline-none"
       >
+        <MenuItem>
+          {({ focus }) => (
+            <button
+              onClick={onToggleRole}
+              className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
+                focus ? "bg-peach-50 text-peach-700" : "text-ink/80"
+              }`}
+            >
+              {isAdmin ? (
+                <ShieldOff className="w-4 h-4" />
+              ) : (
+                <Shield className="w-4 h-4" />
+              )}
+              {isAdmin ? "ถอดสิทธิ์แอดมิน" : "ตั้งเป็นแอดมิน"}
+            </button>
+          )}
+        </MenuItem>
         <MenuItem>
           {({ focus }) => (
             <button

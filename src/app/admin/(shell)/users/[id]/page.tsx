@@ -90,30 +90,30 @@ export default async function AdminUserDetailPage({
         <ArrowLeft className="w-4 h-4" /> กลับไปรายการผู้ใช้
       </Link>
 
-      <div className="grid lg:grid-cols-[380px_1fr] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-4 md:gap-6 items-start">
         {/* LEFT — profile card */}
-        <aside className="bg-white rounded-2xl border border-peach-100 p-6 lg:sticky lg:top-6">
+        <aside className="bg-white rounded-2xl border border-peach-100 p-4 sm:p-6 lg:sticky lg:top-6">
           <div className="flex items-center gap-3">
             {u.avatarUrl ? (
               <Image
                 src={u.avatarUrl}
                 alt=""
-                width={64}
-                height={64}
-                className="rounded-full"
+                width={56}
+                height={56}
+                className="rounded-full w-12 h-12 sm:w-14 sm:h-14 shrink-0"
                 unoptimized
               />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-peach-400 to-peach-600 text-white flex items-center justify-center text-xl font-semibold">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full bg-gradient-to-br from-peach-400 to-peach-600 text-white flex items-center justify-center text-lg sm:text-xl font-semibold leading-none">
                 {initial(u.displayName ?? u.email)}
               </div>
             )}
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="font-semibold text-teal-800 truncate">
                 {u.displayName ?? "—"}
               </div>
               <div className="text-xs text-ink/50 truncate">{u.email ?? "ไม่มีอีเมล"}</div>
-              <div className="mt-1.5 flex items-center gap-1.5">
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {u.role === "admin" ? (
                   <span className="inline-flex items-center gap-1 text-[10px] bg-peach-500 text-white rounded-full px-2 py-0.5">
                     <Shield className="w-3 h-3" /> admin
@@ -236,7 +236,7 @@ export default async function AdminUserDetailPage({
         {/* RIGHT — entitlements + orders */}
         <div className="space-y-6">
           <section className="bg-white rounded-2xl border border-peach-100 overflow-hidden">
-            <header className="px-5 py-4 border-b border-peach-100 flex items-center gap-2">
+            <header className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-peach-100 flex items-center gap-2">
               <BookOpenCheck className="w-4 h-4 text-peach-500" />
               <h2 className="font-semibold text-teal-700">
                 ไฟล์ดาวน์โหลด ({entRows.length})
@@ -267,7 +267,7 @@ export default async function AdminUserDetailPage({
           </section>
 
           <section className="bg-white rounded-2xl border border-peach-100 overflow-hidden">
-            <header className="px-5 py-4 border-b border-peach-100 flex items-center gap-2">
+            <header className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-peach-100 flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-teal-600" />
               <h2 className="font-semibold text-teal-700">
                 ประวัติการสั่งซื้อ ({orderRows.length})
@@ -282,8 +282,8 @@ export default async function AdminUserDetailPage({
                 {orderRows.map(({ o }) => {
                   const its = itemsByOrder.get(o.id) ?? [];
                   return (
-                    <li key={o.id} className="px-5 py-4">
-                      <div className="flex flex-wrap items-center gap-2">
+                    <li key={o.id} className="px-4 sm:px-5 py-3.5 sm:py-4">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <div className="font-mono text-xs text-ink/60">
                           #{o.id.slice(-10)}
                         </div>
@@ -294,35 +294,42 @@ export default async function AdminUserDetailPage({
                             timeStyle: "short",
                           })}
                         </div>
-                        <div className="ml-auto text-sm font-semibold text-teal-700">
+                        <div className="ml-auto text-sm font-semibold text-teal-700 whitespace-nowrap">
                           {formatTHB(o.totalSatang)}
                         </div>
                       </div>
                       {its.length > 0 && (
-                        <ul className="mt-2 text-sm text-ink/70 space-y-0.5">
+                        <ul className="mt-2 text-sm text-ink/70 space-y-1.5">
                           {its.map(({ oi, p }) => (
-                            <li key={oi.id} className="flex items-center gap-2">
-                              <span className="text-ink/30">•</span>
-                              {p ? (
-                                <Link
-                                  href={`/admin/products/${p.id}`}
-                                  className="hover:text-peach-600 truncate"
+                            <li
+                              key={oi.id}
+                              className="flex items-start gap-2"
+                            >
+                              <span className="text-ink/30 leading-6">•</span>
+                              <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-2 gap-y-1">
+                                {p ? (
+                                  <Link
+                                    href={`/admin/products/${p.id}`}
+                                    className="hover:text-peach-600 break-words"
+                                  >
+                                    {oi.productNameSnapshot}
+                                  </Link>
+                                ) : (
+                                  <span className="break-words">
+                                    {oi.productNameSnapshot}
+                                  </span>
+                                )}
+                                <span
+                                  className={`text-[10px] uppercase tracking-wider rounded-full px-2 py-0.5 whitespace-nowrap ${
+                                    oi.productType === "font"
+                                      ? "bg-peach-100 text-peach-700"
+                                      : "bg-teal-100 text-teal-700"
+                                  }`}
                                 >
-                                  {oi.productNameSnapshot}
-                                </Link>
-                              ) : (
-                                <span className="truncate">{oi.productNameSnapshot}</span>
-                              )}
-                              <span
-                                className={`text-[10px] uppercase tracking-wider rounded-full px-2 py-0.5 ${
-                                  oi.productType === "font"
-                                    ? "bg-peach-100 text-peach-700"
-                                    : "bg-teal-100 text-teal-700"
-                                }`}
-                              >
-                                {oi.productType}
-                              </span>
-                              <span className="ml-auto text-xs text-ink/50 whitespace-nowrap">
+                                  {oi.productType}
+                                </span>
+                              </div>
+                              <span className="text-xs text-ink/50 whitespace-nowrap leading-6">
                                 {formatTHB(oi.priceSatang)}
                               </span>
                             </li>
@@ -351,13 +358,13 @@ function InfoRow({
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-3">
-      <div className="w-6 h-6 rounded-lg bg-peach-50 text-peach-600 flex items-center justify-center shrink-0 mt-0.5">
+    <div className="flex items-start gap-2.5">
+      <div className="w-5 h-5 rounded-md bg-peach-50 text-peach-600 flex items-center justify-center shrink-0 mt-0.5 [&>svg]:w-3 [&>svg]:h-3 [&>span]:text-[9px]">
         {icon}
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[11px] text-ink/40 uppercase tracking-wider">{label}</div>
-        <div className="text-sm text-ink/80 truncate">{value}</div>
+        <div className="text-sm text-ink/80 break-words">{value}</div>
       </div>
     </div>
   );
@@ -406,13 +413,13 @@ function EntitlementGroup({
 }) {
   return (
     <div>
-      <div className="px-5 py-2.5 bg-[#fcf8f1] text-xs font-medium text-ink/60 flex items-center gap-2">
+      <div className="px-4 sm:px-5 py-2.5 bg-[#fcf8f1] text-xs font-medium text-ink/60 flex items-center gap-2">
         {icon}
         {title}
       </div>
       <ul className="divide-y divide-peach-50">
         {rows.map(({ e, p }) => (
-          <li key={e.id} className="px-5 py-3 flex items-center gap-3 hover:bg-peach-50/40 transition">
+          <li key={e.id} className="px-4 sm:px-5 py-3 flex items-center gap-3 hover:bg-peach-50/40 transition">
             <div className="relative w-10 h-10 rounded-lg bg-cream overflow-hidden shrink-0">
               {p.coverImageKey && (
                 <Image src={`/api/assets/${p.coverImageKey}`} alt="" fill className="object-cover" />
@@ -425,11 +432,11 @@ function EntitlementGroup({
               >
                 {p.name}
               </Link>
-              <div className="text-[11px] text-ink/50">
+              <div className="text-[11px] text-ink/50 truncate">
                 ได้รับเมื่อ {new Date(e.grantedAt).toLocaleDateString("th-TH")}
               </div>
             </div>
-            <div className="text-sm text-peach-600 font-medium">{formatTHB(p.priceSatang)}</div>
+            <div className="text-sm text-peach-600 font-medium whitespace-nowrap shrink-0">{formatTHB(p.priceSatang)}</div>
           </li>
         ))}
       </ul>
