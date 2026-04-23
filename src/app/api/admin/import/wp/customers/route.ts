@@ -6,7 +6,7 @@ import { users, adminAudit } from "@/lib/db/schema";
 import { requireAdmin } from "@/lib/auth/session";
 import { wcListCustomersPage, wcListAllCustomers } from "@/lib/wp/woo";
 import { extractNextendLine } from "@/lib/wp/nextend";
-import { newId, now, stripWpThumbSize } from "@/lib/utils";
+import { newId, now, rewriteWpAvatarDomain, stripWpThumbSize } from "@/lib/utils";
 
 /**
  * GET  ?page=N&perPage=50  → paginated preview of WC customers
@@ -135,7 +135,9 @@ export async function POST(req: NextRequest) {
       continue;
     }
     const { lineUserId, avatarUrl: metaAvatar } = extractNextendLine(c.meta_data);
-    const candidateAvatar = stripWpThumbSize(metaAvatar ?? pickWcAvatar(c.avatar_url));
+    const candidateAvatar = rewriteWpAvatarDomain(
+      stripWpThumbSize(metaAvatar ?? pickWcAvatar(c.avatar_url)),
+    );
     const name = `${c.first_name ?? ""} ${c.last_name ?? ""}`.trim() || c.username || c.email;
     const billingJson = hasAddress(c.billing) ? JSON.stringify(c.billing) : null;
     const shippingJson = hasAddress(c.shipping) ? JSON.stringify(c.shipping) : null;

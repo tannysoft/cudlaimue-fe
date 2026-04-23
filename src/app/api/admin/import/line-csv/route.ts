@@ -3,7 +3,7 @@ import { eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { users, adminAudit } from "@/lib/db/schema";
 import { requireAdmin } from "@/lib/auth/session";
-import { newId, now, stripWpThumbSize } from "@/lib/utils";
+import { newId, now, rewriteWpAvatarDomain, stripWpThumbSize } from "@/lib/utils";
 
 /**
  * Apply LINE user id + avatar to existing users via CSV.
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       const wpIdRaw = pick(row, WP_ID_COLS);
       const wpId = wpIdRaw ? Number(wpIdRaw) : NaN;
       const email = pick(row, EMAIL_COLS)?.toLowerCase() ?? null;
-      const avatar = stripWpThumbSize(pick(row, AVATAR_COLS)) ?? null;
+      const avatar = rewriteWpAvatarDomain(stripWpThumbSize(pick(row, AVATAR_COLS))) ?? null;
       const name = pick(row, NAME_COLS) ?? null;
 
       candidates.push({
