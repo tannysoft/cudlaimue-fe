@@ -95,7 +95,7 @@ export function CookieNotice() {
             />
             <Cookie className="w-4 h-4 text-peach-600 shrink-0" />
             <p className="flex-1 text-[12px] text-ink/80 leading-snug sm:whitespace-nowrap">
-              เว็บไซต์ใช้ cookies สำหรับวิเคราะห์และการโฆษณา · ปิดได้ที่ตั้งค่า{" "}
+              เว็บไซต์ใช้ cookies สำหรับวิเคราะห์และการโฆษณา · {" "}
               <Link
                 href="/privacy"
                 className="text-peach-700 hover:underline"
