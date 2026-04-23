@@ -21,7 +21,7 @@ export async function GET() {
       const { posts, totalPages } = await wpListArticles({ page, perPage: 100 });
       for (const p of posts) {
         urls.push({
-          loc: `${origin}/articles/${p.slug}`,
+          loc: `${origin}/${p.slug}`,
           lastmod: p.modified ?? p.date,
           changefreq: "monthly",
           priority: 0.6,

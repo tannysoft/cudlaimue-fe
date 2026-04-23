@@ -245,7 +245,7 @@ function FeatureArticleCard({ article }: { article: WPArticle }) {
   const primaryCat = categories[0];
   return (
     <Link
-      href={`/articles/${article.slug}`}
+      href={`/${article.slug}`}
       className="group block rounded-3xl overflow-hidden bg-white border border-peach-100 hover:shadow-xl hover:border-peach-200 transition"
     >
       <div className="relative aspect-[16/9] bg-cream overflow-hidden">
@@ -298,7 +298,7 @@ function CompactArticleCard({ article }: { article: WPArticle }) {
   const primaryCat = categories[0];
   return (
     <Link
-      href={`/articles/${article.slug}`}
+      href={`/${article.slug}`}
       className="group flex gap-3 rounded-2xl overflow-hidden bg-white border border-peach-100 p-3 hover:shadow-md hover:border-peach-200 transition"
     >
       <div className="relative w-32 sm:w-40 aspect-[4/3] rounded-xl bg-cream overflow-hidden shrink-0">
