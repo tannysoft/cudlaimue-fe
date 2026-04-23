@@ -32,3 +32,5 @@ tsconfig.tsbuildinfo
 drizzle/
 
 backup.sql
+
+.claude
