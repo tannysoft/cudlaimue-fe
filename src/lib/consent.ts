@@ -6,6 +6,12 @@
  * check `loadConsent()` before mounting and subscribe to the
  * `cudlaimue:consent-changed` window event so they can load/unload
  * reactively when the user updates their preferences.
+ *
+ * Default stance is **opt-out**: analytics + advertising are treated as ON
+ * for visitors who haven't made a choice yet, so measurement works from
+ * the first page view. Users who want to disable them can do so via the
+ * banner's settings button. When they explicitly save a choice, their
+ * selection is respected on every subsequent load.
  */
 
 const STORAGE_KEY = "cudlaimue:consent";
@@ -22,8 +28,8 @@ export interface Consent {
 
 export const CONSENT_DEFAULT: Consent = {
   necessary: true,
-  analytics: false,
-  advertising: false,
+  analytics: true,
+  advertising: true,
   updatedAt: 0,
 };
 
@@ -33,10 +39,13 @@ export function loadConsent(): Consent {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return CONSENT_DEFAULT;
     const parsed = JSON.parse(raw) as Partial<Consent>;
+    // Only honor an explicit `false` for each category — missing/undefined
+    // means the stored record predates that flag, so fall back to the
+    // opt-out default (on).
     return {
       necessary: true,
-      analytics: !!parsed.analytics,
-      advertising: !!parsed.advertising,
+      analytics: parsed.analytics !== false,
+      advertising: parsed.advertising !== false,
       updatedAt: typeof parsed.updatedAt === "number" ? parsed.updatedAt : 0,
     };
   } catch {
