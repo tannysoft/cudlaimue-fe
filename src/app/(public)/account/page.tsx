@@ -12,22 +12,29 @@ export default async function AccountPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         {user.avatarUrl ? (
-          <Image src={user.avatarUrl} alt="" width={64} height={64} className="rounded-full" unoptimized />
+          <Image
+            src={user.avatarUrl}
+            alt=""
+            width={64}
+            height={64}
+            className="rounded-full shrink-0 w-12 h-12 sm:w-16 sm:h-16 object-cover"
+            unoptimized
+          />
         ) : (
-          <div className="w-16 h-16 rounded-full bg-peach-200 flex items-center justify-center text-peach-700 text-2xl">
+          <div className="shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-peach-200 flex items-center justify-center text-peach-700 text-xl sm:text-2xl">
             {(user.displayName ?? "U")[0]}
           </div>
         )}
-        <div>
-          <h1 className="font-[family-name:var(--font-display)] text-2xl text-teal-600 font-bold">
+        <div className="min-w-0 flex-1">
+          <h1 className="font-[family-name:var(--font-display)] text-lg sm:text-2xl text-teal-600 font-bold truncate">
             สวัสดี {user.displayName ?? "คุณผู้ใช้"}
           </h1>
-          <p className="text-sm text-ink/60">{user.email ?? "เข้าสู่ระบบด้วย LINE"}</p>
+          <p className="text-xs sm:text-sm text-ink/60 truncate">{user.email ?? "เข้าสู่ระบบด้วย LINE"}</p>
         </div>
-        <form action="/api/auth/logout" method="POST" className="ml-auto">
-          <button className="text-sm text-ink/50 hover:text-red-500">ออกจากระบบ</button>
+        <form action="/api/auth/logout" method="POST" className="ml-auto shrink-0">
+          <button className="text-sm text-ink/50 hover:text-red-500 whitespace-nowrap">ออกจากระบบ</button>
         </form>
       </div>
 
