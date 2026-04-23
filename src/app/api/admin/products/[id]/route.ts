@@ -5,6 +5,7 @@ import {
   products,
   orderItems,
   entitlements,
+  downloadLogs,
   adminAudit,
 } from "@/lib/db/schema";
 import { requireAdmin } from "@/lib/auth/session";
@@ -22,9 +23,10 @@ import { newId, now } from "@/lib/utils";
  *     `templates/{id}/` — covers source files, rasterized pages, watermark cache)
  *   - delete entitlements rows (safe here: blocked path above already ensured
  *     no paid orders reference the product)
- *
- * download_logs rows are intentionally left behind — analytics history
- * outlives the product.
+ *   - delete download_logs rows — required because the FK to products has no
+ *     ON DELETE rule, so leaving them would trip a constraint error (hit
+ *     first on templates, since those see the most downloads). We lose
+ *     analytics history for deleted products in exchange.
  */
 export async function DELETE(
   _req: NextRequest,
@@ -71,6 +73,7 @@ export async function DELETE(
     } while (cursor);
   }
 
+  await db().delete(downloadLogs).where(eq(downloadLogs.productId, id));
   await db().delete(entitlements).where(eq(entitlements.productId, id));
   await db().delete(products).where(eq(products.id, id));
 
