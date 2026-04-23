@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { exchangeLineCode } from "@/lib/auth/line";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { createSession } from "@/lib/auth/session";
+import { verifyResourceToken } from "@/lib/crypto";
 import { newId, now } from "@/lib/utils";
 
 
@@ -27,12 +27,13 @@ async function handleCallback(req: NextRequest, origin: string) {
   if (err) return NextResponse.redirect(`${origin}/auth/login?error=${err}`);
   if (!code || !state) return NextResponse.redirect(`${origin}/auth/login?error=missing`);
 
-  const jar = await cookies();
-  const raw = jar.get("line_oauth_state")?.value;
-  jar.delete("line_oauth_state");
-  if (!raw) return NextResponse.redirect(`${origin}/auth/login?error=state_missing`);
-  const saved = JSON.parse(raw) as { state: string; nonce: string; next: string };
-  if (saved.state !== state) return NextResponse.redirect(`${origin}/auth/login?error=state_mismatch`);
+  // State is a signed JWT we issued in /start — no cookie to read. Verifying
+  // the signature is what protects against CSRF (tampered or third-party
+  // state won't verify).
+  const saved = await verifyResourceToken<{ nonce: string; next: string }>(state);
+  if (!saved) {
+    return NextResponse.redirect(`${origin}/auth/login?error=state_invalid`);
+  }
 
   const redirectUri = `${origin}/api/auth/line/callback`;
   const tok = await exchangeLineCode(code, redirectUri);
