@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders, orderItems, entitlements } from "@/lib/db/schema";
 import { triggerEbookPrerender } from "@/lib/ebook-prerender-trigger";
+import { sendPaymentSuccessEmail } from "@/lib/order-payment-email";
 import { newId, now } from "@/lib/utils";
 
 /**
@@ -68,4 +69,10 @@ export async function finalizeOrderPaid(
       ebookIds.map((id) => ({ productId: id, orderId: order.id })),
     );
   }
+
+  opts.waitUntil(
+    sendPaymentSuccessEmail({ order, items, origin: opts.origin }).catch(() => {
+      // Email is a nice-to-have — never block entitlement grant on delivery.
+    }),
+  );
 }

@@ -35,8 +35,8 @@ export function OwnedProductsProvider({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productIds }),
     })
-      .then((r) => r.json())
-      .then((d: { owned: string[] }) => {
+      .then((r) => r.json() as Promise<{ owned: string[] }>)
+      .then((d) => {
         if (cancelled) return;
         setOwned(new Set(d.owned));
       })

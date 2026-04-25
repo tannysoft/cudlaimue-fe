@@ -43,6 +43,16 @@ binding = "BROWSER"
 [images]
 binding = "IMAGES"
 
+# Cloudflare Email Service (transactional, public beta).
+# Docs: https://developers.cloudflare.com/email-service/get-started/send-emails/
+# `remote = true` opts in to the new Email Service backend instead of the
+# legacy Email Routing send (which required verified-destination recipients).
+# Sender domain must be onboarded in dashboard → Email Service → Email Sending
+# (currently `notify.cudlaimue.com`).
+[[send_email]]
+name = "SEND_EMAIL"
+remote = true
+
 # ---------- Public vars (NOT secrets) ----------
 # These are visible to anyone who inspects the Worker bundle. Only put
 # non-sensitive, same-everywhere values here. Host-dependent things (APP_URL)
@@ -55,6 +65,8 @@ LINE_LOGIN_CHANNEL_ID = "1657797454"
 LIFF_ID = "1657797454-Bb4wzbq8"
 BEAM_API_URL = "https://api.beamcheckout.com/api/v1"
 BEAM_MERCHANT_ID = "cudlaimue"
+EMAIL_FROM = "no-reply@notify.cudlaimue.com"
+EMAIL_FROM_NAME = "คัดลายมือ"
 
 # ---------- Secrets ----------
 # Set via `.dev.vars` (for local dev) and `wrangler secret put KEY` (for prod):

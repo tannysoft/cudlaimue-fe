@@ -4,6 +4,8 @@
 // (this file is overwritten). Kept committed so CI type-checks pass without
 // needing Cloudflare credentials.
 
+/// <reference types="@cloudflare/workers-types" />
+
 interface CloudflareEnv {
   DB: import("@cloudflare/workers-types").D1Database;
   R2: import("@cloudflare/workers-types").R2Bucket;
@@ -12,8 +14,11 @@ interface CloudflareEnv {
   ASSETS: import("@cloudflare/workers-types").Fetcher;
   BROWSER: import("@cloudflare/workers-types").Fetcher;
   IMAGES: import("@cloudflare/workers-types").ImagesBinding;
+  SEND_EMAIL: import("@cloudflare/workers-types").SendEmail;
 
   APP_URL: string;
+  EMAIL_FROM: string;
+  EMAIL_FROM_NAME: string;
   WP_API_URL: string;
   WC_API_URL: string;
   WC_CONSUMER_KEY?: string;
