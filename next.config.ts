@@ -80,6 +80,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/buy", destination: "/fonts", permanent: true },
       { source: "/my-account/downloads", destination: "/account/library", permanent: true },
+      { source: "/wp-login.php", destination: "/auth/login", permanent: true },
     ];
   },
 };

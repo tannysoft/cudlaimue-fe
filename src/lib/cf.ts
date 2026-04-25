@@ -5,6 +5,7 @@ import type {
   D1Database,
   Fetcher,
   ImagesBinding,
+  SendEmail,
 } from "@cloudflare/workers-types";
 
 export interface Env {
@@ -15,9 +16,12 @@ export interface Env {
   ASSETS: Fetcher;
   BROWSER: Fetcher; // Browser Rendering binding
   IMAGES: ImagesBinding; // Cloudflare Image Transformations
+  SEND_EMAIL: SendEmail; // Cloudflare Email Routing outbound
 
   // vars
   APP_URL: string;
+  EMAIL_FROM: string;
+  EMAIL_FROM_NAME: string;
   WP_API_URL: string;
   WC_API_URL: string;
   WC_CONSUMER_KEY?: string;
